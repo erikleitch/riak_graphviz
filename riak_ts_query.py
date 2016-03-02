@@ -157,7 +157,6 @@ kvp_funs = [
     ('kvpb_3',  {'label': 'sub_tsqueryreq()'}),
     ('kvpb_4',  {'label': 'riak_kv_qry:\n submit()'}),
     ('kvpb_5',  {'label': 'riak_kv_qry:\n maybe_submit_to_queue()'}),
-    ('kvpb_6',  {'label': 'riak_kv_qry:\n processQueries()'}),
     ('kvpb_7',  {'label': 'riak_kv_qry:\n put_on_queue()'}),
     ('kvpb_8',  {'label': 'riak_kv_qry:\n maybe_await_query_results()'})]
 
@@ -174,9 +173,14 @@ kvqryworker_funs = [
     ('kvqryworker_4',  {'label': 'riak_kv_index_fsm_sup:\n start_index_fsm()'})]
 
 kvqryworker_funs2 = [
-    ('kvqryworker_fake', {'label': '', 'color':'invis'}),
-    ('kvqryworker_5',    {'label': 'handle_info()'}),
-    ('kvqryworker_6',    {'label': 'subqueries_done()'})]
+    ('kvqryworker_5',    {'label': '', 'color':'invis'}),
+    ('kvqryworker_6',    {'label': 'handle_info()'}),
+    ('kvqryworker_7',    {'label': 'subqueries_done()'})]
+
+kvqryworker_funs3 = [
+    ('kvqryworker_9',    {'label': '', 'color':'invis'}),
+    ('kvqryworker_10',    {'label': '', 'color':'invis'}),
+    ('kvqryworker_11',    {'label': 'add_subquery_result()'})]
 
 kvindexfsm_funs = [
     ('kvindexfsm_0',  {'label': 'riak_kv_index_fsm',           'color': fsm_color}),
@@ -210,9 +214,10 @@ corevnodeworker_funs = [
     ('corevnodeworker_4',  {'label': 'riak_kv_vnode:\nresult_fun_ack()'}),
     ('corevnodeworker_5',  {'label': 'riak_core_vnode:\nreply()'})]
 
-dg = createDigraph([client_funs, kvp_funs, kvqryqueue_funs, kvqryworker_funs, kvqryworker_funs2, kvindexfsm_funs, corevnode_funs, corevnodeworkerpool_funs, corevnodeworker_funs])
+dg = createDigraph([client_funs, kvp_funs, kvqryqueue_funs, kvqryworker_funs, kvqryworker_funs2, kvqryworker_funs3, kvindexfsm_funs, corevnode_funs, corevnodeworkerpool_funs, corevnodeworker_funs])
 
-dg.edge('kvqryworker_0', 'kvqryworker_5')
+dg.edge('kvqryworker_0', 'kvqryworker_6')
+dg.edge('kvqryworker_6', 'kvqryworker_11')
 
 dg.edge('client_0',              'kvpb_1',                '   1', {'color':service_color})
 dg.edge('kvpb_7',                'kvqryqueue_1',          '   2', {'color':server_color})
@@ -222,13 +227,14 @@ dg.edge('kvindexfsm_4',          'corevnode_1',           '   5', {'color':fsm_c
 dg.edge('corevnode_6',           'corevnodeworkerpool_1', '   6', {'color':fsm_color})
 dg.edge('corevnodeworkerpool_2', 'corevnodeworker_1',     '   7', {'color':server_color})
 dg.edge('corevnodeworker_5',     'kvindexfsm_5',          '   8', {'color':fsm_color})
-dg.edge('kvindexfsm_7',          'kvqryworker_5',         '   9', {'color':server_color})
-dg.edge('kvqryworker_6',         'kvpb_8',                '  10', {'color':service_color})
-dg.edge('kvpb_8',                'client_0',              '  11', {'color':service_color})
+dg.edge('kvindexfsm_6',          'kvqryworker_11',        '   9', {'color':server_color})
+dg.edge('kvindexfsm_7',          'kvqryworker_7',         '  10', {'color':server_color})
+dg.edge('kvqryworker_7',         'kvpb_8',                '  11', {'color':service_color})
+dg.edge('kvpb_8',                'client_0',              '  12', {'color':service_color})
 
 
 
-dg.render('img/riak_ts_query')
+dg.render('riak_ts_query')
 
 
 

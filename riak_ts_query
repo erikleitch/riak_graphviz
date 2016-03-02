@@ -1,0 +1,175 @@
+digraph root {
+	subgraph subgraph_0 {
+		graph [rank=same]
+			client_0 [label=client color=blue]
+			kvpb_0 [label=riak_kv_pb_timeseries color=blue]
+			kvqryqueue_0 [label=riak_kv_qry_queue color=cyan]
+			kvqryworker_0 [label=riak_kv_qry_worker color=cyan]
+			kvqryworker_5 [label="" color=invis]
+			kvqryworker_9 [label="" color=invis]
+			kvindexfsm_0 [label=riak_kv_index_fsm color=red]
+			corevnode_0 [label=riak_core_vnode color=red]
+			corevnodeworkerpool_0 [label=riak_core_vnode_worker_pool color=red]
+			corevnodeworker_0 [label=riak_core_vnode_worker color=cyan]
+	}
+	subgraph subgraph_1 {
+		graph [rank=same]
+			client_01 [label="" color=invis shape=rectangle]
+			kvpb_1 [label="process()" shape=rectangle]
+			kvqryqueue_1 [label="handle_call()" shape=rectangle]
+			kvqryworker_1 [label="pop_next_query()" shape=rectangle]
+			kvqryworker_6 [label="handle_info()" shape=rectangle]
+			kvqryworker_10 [label="" color=invis shape=rectangle]
+			kvindexfsm_1 [label="riak_core_coverage_fsm:
+ init()" shape=rectangle]
+			corevnode_1 [label="active(?COVERAGE_REQ)" shape=rectangle]
+			corevnodeworkerpool_1 [label="ready({work, Work, From})" shape=rectangle]
+			corevnodeworker_1 [label="handle_cast({work, Work, WorkFrom, Caller)" shape=rectangle]
+	}
+	subgraph subgraph_2 {
+		graph [rank=same]
+			client_02 [label="" color=invis shape=rectangle]
+			kvpb_2 [label="check_table_and_call()" shape=rectangle]
+			kvqryqueue_2 [label="do_push_query()" shape=rectangle]
+			kvqryworker_2 [label="execute_query()" shape=rectangle]
+			kvqryworker_7 [label="subqueries_done()" shape=rectangle]
+			kvqryworker_11 [label="add_subquery_result()" shape=rectangle]
+			kvindexfsm_2 [label="riak_core_coverage_fsm:
+ initialize()" shape=rectangle]
+			corevnode_2 [label="vnode_coverage()" shape=rectangle]
+			corevnodeworkerpool_2 [label="riak_core_vnode_worker:
+handle_work()" shape=rectangle]
+			corevnodeworker_2 [label="riak_kv_worker:
+handle_work()" shape=rectangle]
+	}
+	subgraph subgraph_3 {
+		graph [rank=same]
+			client_03 [label="" color=invis shape=rectangle]
+			kvpb_3 [label="sub_tsqueryreq()" shape=rectangle]
+			kvqryqueue_03 [label="" color=invis shape=rectangle]
+			kvqryworker_3 [label="run_sub_qs_fn()" shape=rectangle]
+			kvqryworker_53 [label="" color=invis shape=rectangle]
+			kvqryworker_93 [label="" color=invis shape=rectangle]
+			kvindexfsm_3 [label="riak_core_vnode_master:
+ coverage()" shape=rectangle]
+			corevnode_3 [label="riak_kv_vnode:
+handle_coverage()" shape=rectangle]
+			corevnodeworkerpool_03 [label="" color=invis shape=rectangle]
+			corevnodeworker_3 [label="eleveldb:
+fold()" shape=rectangle]
+	}
+	subgraph subgraph_4 {
+		graph [rank=same]
+			client_04 [label="" color=invis shape=rectangle]
+			kvpb_4 [label="riak_kv_qry:
+ submit()" shape=rectangle]
+			kvqryqueue_04 [label="" color=invis shape=rectangle]
+			kvqryworker_4 [label="riak_kv_index_fsm_sup:
+ start_index_fsm()" shape=rectangle]
+			kvqryworker_54 [label="" color=invis shape=rectangle]
+			kvqryworker_94 [label="" color=invis shape=rectangle]
+			kvindexfsm_4 [label="riak_core_vnode_master:
+ proxy_cast()" shape=rectangle]
+			corevnode_4 [label="riak_kv_vnode:
+handle_range_scan()" shape=rectangle]
+			corevnodeworkerpool_04 [label="" color=invis shape=rectangle]
+			corevnodeworker_4 [label="riak_kv_vnode:
+result_fun_ack()" shape=rectangle]
+	}
+	subgraph subgraph_5 {
+		graph [rank=same]
+			client_05 [label="" color=invis shape=rectangle]
+			kvpb_5 [label="riak_kv_qry:
+ maybe_submit_to_queue()" shape=rectangle]
+			kvqryqueue_05 [label="" color=invis shape=rectangle]
+			kvqryworker_05 [label="" color=invis shape=rectangle]
+			kvqryworker_55 [label="" color=invis shape=rectangle]
+			kvqryworker_95 [label="" color=invis shape=rectangle]
+			kvindexfsm_5 [label="riak_core_coverage_fsm:
+ waiting_results()" shape=rectangle]
+			corevnode_5 [label="riak_kv_vnode:
+handle_coverage_range_scan()" shape=rectangle]
+			corevnodeworkerpool_05 [label="" color=invis shape=rectangle]
+			corevnodeworker_5 [label="riak_core_vnode:
+reply()" shape=rectangle]
+	}
+	subgraph subgraph_6 {
+		graph [rank=same]
+			client_06 [label="" color=invis shape=rectangle]
+			kvpb_7 [label="riak_kv_qry:
+ put_on_queue()" shape=rectangle]
+			kvqryqueue_06 [label="" color=invis shape=rectangle]
+			kvqryworker_06 [label="" color=invis shape=rectangle]
+			kvqryworker_56 [label="" color=invis shape=rectangle]
+			kvqryworker_96 [label="" color=invis shape=rectangle]
+			kvindexfsm_6 [label="riak_kv_index_fsm:
+process_results()" shape=rectangle]
+			corevnode_6 [label="riak_core_vnode_worker_pool:
+handle_work()" shape=rectangle]
+			corevnodeworkerpool_06 [label="" color=invis shape=rectangle]
+			corevnodeworker_06 [label="" color=invis shape=rectangle]
+	}
+	subgraph subgraph_7 {
+		graph [rank=same]
+			client_07 [label="" color=invis shape=rectangle]
+			kvpb_8 [label="riak_kv_qry:
+ maybe_await_query_results()" shape=rectangle]
+			kvqryqueue_07 [label="" color=invis shape=rectangle]
+			kvqryworker_07 [label="" color=invis shape=rectangle]
+			kvqryworker_57 [label="" color=invis shape=rectangle]
+			kvqryworker_97 [label="" color=invis shape=rectangle]
+			kvindexfsm_7 [label="riak_kv_index_fsm:
+finish()" shape=rectangle]
+			corevnode_07 [label="" color=invis shape=rectangle]
+			corevnodeworkerpool_07 [label="" color=invis shape=rectangle]
+			corevnodeworker_07 [label="" color=invis shape=rectangle]
+	}
+		kvpb_0 -> kvpb_1
+		kvpb_1 -> kvpb_2
+		kvpb_2 -> kvpb_3
+		kvpb_3 -> kvpb_4
+		kvpb_4 -> kvpb_5
+		kvpb_5 -> kvpb_7
+		kvpb_7 -> kvpb_8
+		kvqryqueue_0 -> kvqryqueue_1
+		kvqryqueue_1 -> kvqryqueue_2
+		kvqryworker_0 -> kvqryworker_1
+		kvqryworker_1 -> kvqryworker_2
+		kvqryworker_2 -> kvqryworker_3
+		kvqryworker_3 -> kvqryworker_4
+		kvqryworker_6 -> kvqryworker_7
+		kvindexfsm_0 -> kvindexfsm_1
+		kvindexfsm_1 -> kvindexfsm_2
+		kvindexfsm_2 -> kvindexfsm_3
+		kvindexfsm_3 -> kvindexfsm_4
+		kvindexfsm_4 -> kvindexfsm_5
+		kvindexfsm_5 -> kvindexfsm_6
+		kvindexfsm_6 -> kvindexfsm_7
+		corevnode_0 -> corevnode_1
+		corevnode_1 -> corevnode_2
+		corevnode_2 -> corevnode_3
+		corevnode_3 -> corevnode_4
+		corevnode_4 -> corevnode_5
+		corevnode_5 -> corevnode_6
+		corevnodeworkerpool_0 -> corevnodeworkerpool_1
+		corevnodeworkerpool_1 -> corevnodeworkerpool_2
+		corevnodeworker_0 -> corevnodeworker_1
+		corevnodeworker_1 -> corevnodeworker_2
+		corevnodeworker_2 -> corevnodeworker_3
+		corevnodeworker_3 -> corevnodeworker_4
+		corevnodeworker_4 -> corevnodeworker_5
+		kvqryworker_0 -> kvqryworker_6
+		kvqryworker_6 -> kvqryworker_11
+		client_0 -> kvpb_1 [label="   1" color=blue]
+		kvpb_7 -> kvqryqueue_1 [label="   2" color=cyan]
+		kvqryqueue_2 -> kvqryworker_1 [label="   3" color=cyan]
+		kvqryworker_4 -> kvindexfsm_1 [label="   4" color=red]
+		kvindexfsm_4 -> corevnode_1 [label="   5" color=red]
+		corevnode_6 -> corevnodeworkerpool_1 [label="   6" color=red]
+		corevnodeworkerpool_2 -> corevnodeworker_1 [label="   7" color=cyan]
+		corevnodeworker_5 -> kvindexfsm_5 [label="   8" color=red]
+		kvindexfsm_6 -> kvqryworker_11 [label="   9" color=cyan]
+		kvindexfsm_7 -> kvqryworker_7 [label="  10" color=cyan]
+		kvqryworker_7 -> kvpb_8 [label="  11" color=blue]
+		kvpb_8 -> client_0 [label="  12" color=blue]
+}
