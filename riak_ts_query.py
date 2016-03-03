@@ -4,8 +4,8 @@ import graphviz as gv
 import functools
 import numpy
 
-graph = functools.partial(gv.Graph, format='pdf')
-digraph = functools.partial(gv.Digraph, format='pdf')
+#graph = functools.partial(gv.Graph, format='pdf')
+#digraph = functools.partial(gv.Digraph, format='pdf')
 
 def add_nodes(graph, nodes):
     for n in nodes:
@@ -232,9 +232,8 @@ dg.edge('kvindexfsm_7',          'kvqryworker_7',         '  10', {'color':serve
 dg.edge('kvqryworker_7',         'kvpb_8',                '  11', {'color':service_color})
 dg.edge('kvpb_8',                'client_0',              '  12', {'color':service_color})
 
-
-
 dg.render('riak_ts_query')
+
 
 
 
