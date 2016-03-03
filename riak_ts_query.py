@@ -196,9 +196,9 @@ corevnode_funs = [
     ('corevnode_0',  {'label': 'riak_core_vnode',             'color': fsm_color}),
     ('corevnode_1',  {'label': 'active(?COVERAGE_REQ)'}),
     ('corevnode_2',  {'label': 'vnode_coverage()'}),
-    ('corevnode_3',  {'label': 'riak_kv_vnode:\nhandle_coverage()'}),
-    ('corevnode_4',  {'label': 'riak_kv_vnode:\nhandle_range_scan()'}),
-    ('corevnode_5',  {'label': 'riak_kv_vnode:\nhandle_coverage_range_scan()'}),
+#    ('corevnode_3',  {'label': 'riak_kv_vnode:\nhandle_coverage()'}),
+#    ('corevnode_4',  {'label': 'riak_kv_vnode:\nhandle_range_scan()'}),
+#    ('corevnode_5',  {'label': 'riak_kv_vnode:\nhandle_coverage_range_scan()'}),
     ('corevnode_6',  {'label': 'riak_core_vnode_worker_pool:\nhandle_work()'})]
 
 corevnodeworkerpool_funs = [
