@@ -31,6 +31,8 @@ def parseProfilerOutput(fileName, labelDict):
             label = labels[i].replace("'", "")
             label = label.replace("\n", "")
             labelDict[label] = float(vals[i-1])
+    else:
+        vals   = content[0].split(' ')
             
     return float(vals[1]), labelDict
 
@@ -53,7 +55,7 @@ def labelWpix(frac, label):
 
     if label in globalLabelDict.keys():
         frac = 100 * float(globalLabelDict[label])/globalTotalTime
-        print 'Found frac = ' + str(frac) + ' for label = ' + label
+#        print 'Found frac = ' + str(frac) + ' for label = ' + label
         
     if frac > 0:
         pieGen(frac)
@@ -211,11 +213,23 @@ def createDigraph(nodelists):
         connect_nodes(dg, l)
         
     return dg
-        
-def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFileName):
+
+def printStats(totalTime, labelDict, excDict, compTotalTime):
+    fracTime = 0
+    for key in labelDict.keys():
+        if key not in excDict.keys():
+#            print 'Time for ' + key + ' : ' + str(labelDict[key])
+            fracTime += labelDict[key]
+    print 'Total = ' + str(totalTime) + ' Frac = ' + str(fracTime) + ' Ratio = ' + str(fracTime/totalTime)
+    print 'Estimated ' + str(100*(totalTime - compTotalTime)/totalTime) + '% spent profiling'
+    
+def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFileName, clientCompFileName):
 
     global globalLabelDict
     global globalTotalTime
+
+    compLabelDict = {}
+    compTotalTime, compLabelDict = parseProfilerOutput(clientCompFileName, compLabelDict)
 
     baseLabelDict = {}
 
@@ -225,6 +239,15 @@ def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFile
     globalTotalTime, globalLabelDict = parseProfilerOutput(serverFileName, globalLabelDict)
     globalTotalTime, globalLabelDict = parseProfilerOutput(clientFileName, globalLabelDict)
 
+    excDict = {}
+    excDict['riak_api_pb_server:connected'] = 1
+    excDict['riak_api_pb_server:process_message'] = 1
+    excDict['riak_kv_qry_worker:execute_query'] = 1
+    excDict['riak_kv_qry:maybe_await_query_results'] = 1
+    excDict['riak_core_vnode_worker:handle_cast'] = 1
+    
+    printStats(globalTotalTime, globalLabelDict, excDict, compTotalTime)
+    
     #------------------------------------------------------------
     # Subtract off baselines
     #------------------------------------------------------------
@@ -460,6 +483,19 @@ def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFile
         ('kvindexfsm2_1',  {'label': '',           'color':'invis'}),
         ('kvindexfsm2_2',  {'label': labelWpix(0,'riak_kv_index_fsm:process_results')})]
     
+    kvindexfsm5_funs = [
+        ('kvindexfsm5_0',  {'label': '',           'color':'invis'}),
+        ('kvindexfsm5_1',  {'label': '',           'color':'invis'}),
+        ('kvindexfsm5_2',  {'label': '',           'color':'invis'}),
+        ('kvindexfsm5_3',  {'label': labelWpix(0,'riak_kv_index_fsm:process_query_results')})]
+
+    kvindexfsm6_funs = [
+        ('kvindexfsm6_0',  {'label': '',           'color':'invis'}),
+        ('kvindexfsm6_1',  {'label': '',           'color':'invis'}),
+        ('kvindexfsm6_2',  {'label': '',           'color':'invis'}),
+        ('kvindexfsm6_3',  {'label': '',           'color':'invis'}),
+        ('kvindexfsm6_4',  {'label': labelWpix(0,'riak_kv_vnode:ack_keys')})]
+
     kvindexfsm3_funs = [
         ('kvindexfsm3_0',  {'label': '',           'color':'invis'}),
         ('kvindexfsm3_1',  {'label': '',           'color':'invis'}),
@@ -504,7 +540,16 @@ def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFile
         ('corevnodeworker2_3',  {'label': '',           'color':'invis'}),
         ('corevnodeworker2_4',  {'label': labelWpix(0, 'riak_kv_vnode:result_fun_ack')}),
         ('corevnodeworker2_5',  {'label': labelWpix(0, 'riak_core_vnode:reply')})]
-    
+
+    corevnodeworker3_funs = [
+        ('corevnodeworker3_0',  {'label': '',           'color':'invis'}),
+        ('corevnodeworker3_1',  {'label': '',           'color':'invis'}),
+        ('corevnodeworker3_2',  {'label': '',           'color':'invis'}),
+        ('corevnodeworker3_3',  {'label': '',           'color':'invis'}),
+        ('corevnodeworker3_4',  {'label': '',           'color':'invis'}),
+        ('corevnodeworker3_5',  {'label': labelWpix(0, 'riak_kv_vnode:finish_fold')}),
+        ('corevnodeworker3_6',  {'label': labelWpix(0, 'riak_core_vnode:reply')})]
+
     dg = createDigraph([
         riakc_funs,
         riakpb_funs,
@@ -536,11 +581,14 @@ def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFile
         kvindexfsm2_funs,
         kvindexfsm3_funs,
         kvindexfsm4_funs,
+        kvindexfsm5_funs,
+        kvindexfsm6_funs,
         corevnode_funs,
         corevnodeworkerpool_funs,
         corevnodeworker_funs,
         corevnodeworker1_funs,
-        corevnodeworker2_funs])
+        corevnodeworker2_funs,
+        corevnodeworker3_funs])
 
     ortho = False
     #ortho = True
@@ -585,9 +633,12 @@ def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFile
     dg.edge('kvindexfsm_0',  'kvindexfsm4_1', '', {'arrowhead':'none'})
     dg.edge('kvindexfsm1_1', 'kvindexfsm2_2')
     dg.edge('kvindexfsm1_1', 'kvindexfsm3_2')
+    dg.edge('kvindexfsm2_2', 'kvindexfsm5_3')
+    dg.edge('kvindexfsm2_2', 'kvindexfsm6_4')
 
     dg.edge('corevnodeworker_2', 'corevnodeworker1_3')
     dg.edge('corevnodeworker_2', 'corevnodeworker2_4')
+    dg.edge('corevnodeworker_2', 'corevnodeworker3_5')
 
     dg.edge('riakc_3',               'riakpb_2',              '', {'color':server_color, lab:'    1 '})
     dg.edge('riakpb4_4',             'kvpb_1',                '', {'color':fsm_color,    lab:'    2 '})
@@ -598,21 +649,25 @@ def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFile
     dg.edge('corevnode_7',           'corevnodeworkerpool_2', '', {'color':fsm_color,    lab:'    7 '})
     dg.edge('corevnodeworkerpool_3', 'corevnodeworker_2',     '', {'color':server_color, lab:'    8 '})
     dg.edge('corevnodeworker2_5',    'kvindexfsm2_2',         '', {'color':fsm_color,    lab:'    9 '})
-    dg.edge('kvindexfsm2_2',         'kvqryworker3_2',        '', {'color':server_color, lab:'   10 '})
-    dg.edge('corevnodeworker2_5',    'kvindexfsm3_2',         '', {'color':fsm_color,    lab:'   11 '})
-    dg.edge('kvindexfsm3_2',         'kvqryworker2_2',        '', {'color':server_color, lab:'   12 '})
-    dg.edge('kvqryworker2_2',        'kvpb6_12',              '', {'color':server_color, lab:'   13 '})
-    dg.edge('kvpb1_6',               'riakpb_5',              '', {'color':server_color, lab:'   14 '})
-    dg.edge('riakpb5_4',             'riakc_3',               '', {'color':server_color, lab:'   15 '})
+    dg.edge('kvindexfsm5_3',         'kvqryworker3_2',        '', {'color':server_color, lab:'   10 '})
+    dg.edge('kvindexfsm6_4',         'corevnodeworker2_4',    '', {'color':server_color, lab:'   11 '})
+    dg.edge('corevnodeworker3_6',    'kvindexfsm3_2',         '', {'color':fsm_color,    lab:'   12 '})
+    dg.edge('kvindexfsm3_2',         'kvqryworker2_2',        '', {'color':server_color, lab:'   13 '})
+    dg.edge('kvqryworker2_2',        'kvpb6_12',              '', {'color':server_color, lab:'   14 '})
+    dg.edge('kvpb1_6',               'riakpb_5',              '', {'color':server_color, lab:'   15 '})
+    dg.edge('riakpb5_4',             'riakc_3',               '', {'color':server_color, lab:'   16 '})
     
     if ortho:
         dg.graph_attr['splines'] = 'ortho'
+
+    dg.graph_attr['label'] = 'RiakTS Query Path'
+    dg.graph_attr['labelloc'] = 't'
     
     dg.render('riak_ts_query')
     
     return dg
 
-makePlots('client.txt', 'server.txt', 'clientbase.txt', 'serverbase.txt')
+makePlots('client.txt', 'server.txt', 'clientbase.txt', 'serverbase.txt', 'clientcomp.txt')
 
 
 
