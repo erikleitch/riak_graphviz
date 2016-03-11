@@ -94,14 +94,17 @@ digraph root {
 	}
 	subgraph subgraph_10 {
 		graph [rank=same]
-			kvpb2_10 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry_queue</FONT></TD></TR><TR><TD>put_on_queue</TD></TR></TABLE>> shape=rectangle]
 			kvpb9_10 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_ql_parser</FONT></TD></TR><TR><TD>parse</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_3.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 			kvpb10_10 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry</FONT></TD></TR><TR><TD>maybe_submit_to_queue</TD></TR></TABLE>> shape=rectangle]
 	}
 	subgraph subgraph_11 {
 		graph [rank=same]
-			kvpb2_11 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">gen_server</FONT></TD></TR><TR><TD>call</TD></TR></TABLE>> shape=rectangle]
-			kvpb6_11 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry</FONT></TD></TR><TR><TD>maybe_await_query_results</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_50.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+			kvpb2_11 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry_queue</FONT></TD></TR><TR><TD>put_on_queue</TD></TR></TABLE>> shape=rectangle]
+	}
+	subgraph subgraph_12 {
+		graph [rank=same]
+			kvpb2_12 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">gen_server</FONT></TD></TR><TR><TD>call</TD></TR></TABLE>> shape=rectangle]
+			kvpb6_12 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry</FONT></TD></TR><TR><TD>maybe_await_query_results</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_50.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 	}
 		riakc_0 -> riakc_1 [label="" arrowhead=none]
 		riakc_1 -> riakc_2
@@ -111,7 +114,7 @@ digraph root {
 		riakpb5_3 -> riakpb5_4
 		kvpb_0 -> kvpb_1 [label="" arrowhead=none]
 		kvpb3_4 -> kvpb3_5
-		kvpb2_10 -> kvpb2_11
+		kvpb2_11 -> kvpb2_12
 		kvpb7_7 -> kvpb7_8
 		kvpb9_9 -> kvpb9_10
 		kvqryqueue_0 -> kvqryqueue_1 [label="" arrowhead=none]
@@ -136,6 +139,8 @@ digraph root {
 		corevnodeworker_0 -> corevnodeworker_1 [label="" arrowhead=none]
 		corevnodeworker_1 -> corevnodeworker_2
 		corevnodeworker2_4 -> corevnodeworker2_5
+		kvqryworker5_7 -> kvqryworker4_6 [label="" color=invis]
+		kvpb8_6 -> kvpb7_7 [label="" color=invis]
 		riakpb_0 -> riakpb_5 [label="" arrowhead=none]
 		riakpb_2 -> riakpb1_3
 		riakpb_2 -> riakpb4_4
@@ -148,8 +153,8 @@ digraph root {
 		kvqryworker1_5 -> kvqryworker5_7
 		kvpb5_3 -> kvpb3_4
 		kvpb5_3 -> kvpb1_6
-		kvpb10_10 -> kvpb2_10
-		kvpb10_10 -> kvpb6_11
+		kvpb10_10 -> kvpb2_11
+		kvpb10_10 -> kvpb6_12
 		kvpb_1 -> kvpb4_2
 		kvpb_1 -> kvpb5_3
 		kvpb3_5 -> kvpb8_6
@@ -164,7 +169,7 @@ digraph root {
 		corevnodeworker_2 -> corevnodeworker2_4
 		riakc_3 -> riakpb_2 [label="" color=cyan label="    1 "]
 		riakpb4_4 -> kvpb_1 [label="" color=red label="    2 "]
-		kvpb2_11 -> kvqryqueue_2 [label="" color=cyan label="    3 "]
+		kvpb2_12 -> kvqryqueue_2 [label="" color=cyan label="    3 "]
 		kvqryqueue_3 -> kvqryworker1_2 [label="" color=cyan label="    4 "]
 		kvqryworker4_6 -> kvindexfsm_0 [label="" color=red label="    5 "]
 		kvindexfsm4_4 -> corevnode_1 [label="" color=red label="    6 "]
@@ -174,7 +179,7 @@ digraph root {
 		kvindexfsm2_2 -> kvqryworker3_2 [label="" color=cyan label="   10 "]
 		corevnodeworker2_5 -> kvindexfsm3_2 [label="" color=red label="   11 "]
 		kvindexfsm3_2 -> kvqryworker2_2 [label="" color=cyan label="   12 "]
-		kvqryworker2_2 -> kvpb6_11 [label="" color=cyan label="   13 "]
+		kvqryworker2_2 -> kvpb6_12 [label="" color=cyan label="   13 "]
 		kvpb1_6 -> riakpb_5 [label="" color=cyan label="   14 "]
 		riakpb5_4 -> riakc_3 [label="" color=cyan label="   15 "]
 }

@@ -371,8 +371,9 @@ def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFile
         ('kvpb2_7',   {'label': '', 'color':'invis'}),
         ('kvpb2_8',   {'label': '', 'color':'invis'}),
         ('kvpb2_9',   {'label': '', 'color':'invis'}),
-        ('kvpb2_10',   {'label': labelWpix(0,'riak_kv_qry_queue:put_on_queue')}),
-        ('kvpb2_11',   {'label': labelWpix(0,'gen_server:call')})]
+        ('kvpb2_10',  {'label': '', 'color':'invis'}),
+        ('kvpb2_11',  {'label': labelWpix(0,'riak_kv_qry_queue:put_on_queue')}),
+        ('kvpb2_12',  {'label': labelWpix(0,'gen_server:call')})]
 
     kvp6_funs = [
         ('kvpb6_0',   {'label': '', 'color':'invis'}),
@@ -386,7 +387,8 @@ def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFile
         ('kvpb6_8',   {'label': '', 'color':'invis'}),
         ('kvpb6_9',   {'label': '', 'color':'invis'}),
         ('kvpb6_10',   {'label': '', 'color':'invis'}),
-        ('kvpb6_11',  {'label': labelWpix(0,'riak_kv_qry:maybe_await_query_results')})]
+        ('kvpb6_11',   {'label': '', 'color':'invis'}),
+        ('kvpb6_12',  {'label': labelWpix(0,'riak_kv_qry:maybe_await_query_results')})]
     
     kvqryqueue_funs = [
         ('kvqryqueue_0',  {'label': 'riak_kv_qry_queue',           'color': server_color}),
@@ -548,6 +550,11 @@ def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFile
     else:
         lab = 'label'
 
+    # This is just to force graphviz to place 4_6 lower than 5_7
+    
+    dg.edge('kvqryworker5_7', 'kvqryworker4_6', '', {'color':'invis'})
+    dg.edge('kvpb8_6', 'kvpb7_7', '', {'color':'invis'})
+    
     dg.edge('riakpb_0', 'riakpb_5', '', {'arrowhead':'none'})
 
     dg.edge('riakpb_2', 'riakpb1_3')
@@ -564,8 +571,8 @@ def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFile
 
     dg.edge('kvpb5_3', 'kvpb3_4')
     dg.edge('kvpb5_3', 'kvpb1_6')
-    dg.edge('kvpb10_10', 'kvpb2_10')
-    dg.edge('kvpb10_10', 'kvpb6_11')
+    dg.edge('kvpb10_10', 'kvpb2_11')
+    dg.edge('kvpb10_10', 'kvpb6_12')
     dg.edge('kvpb_1',  'kvpb4_2')
     dg.edge('kvpb_1',  'kvpb5_3')
 
@@ -584,7 +591,7 @@ def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFile
 
     dg.edge('riakc_3',               'riakpb_2',              '', {'color':server_color, lab:'    1 '})
     dg.edge('riakpb4_4',             'kvpb_1',                '', {'color':fsm_color,    lab:'    2 '})
-    dg.edge('kvpb2_11',              'kvqryqueue_2',          '', {'color':server_color, lab:'    3 '})
+    dg.edge('kvpb2_12',              'kvqryqueue_2',          '', {'color':server_color, lab:'    3 '})
     dg.edge('kvqryqueue_3',          'kvqryworker1_2',        '', {'color':server_color, lab:'    4 '})
     dg.edge('kvqryworker4_6',        'kvindexfsm_0',          '', {'color':fsm_color,    lab:'    5 '})
     dg.edge('kvindexfsm4_4',         'corevnode_1',           '', {'color':fsm_color,    lab:'    6 '})
@@ -594,7 +601,7 @@ def makePlots(clientFileName, serverFileName, clientBaseFileName, serverBaseFile
     dg.edge('kvindexfsm2_2',         'kvqryworker3_2',        '', {'color':server_color, lab:'   10 '})
     dg.edge('corevnodeworker2_5',    'kvindexfsm3_2',         '', {'color':fsm_color,    lab:'   11 '})
     dg.edge('kvindexfsm3_2',         'kvqryworker2_2',        '', {'color':server_color, lab:'   12 '})
-    dg.edge('kvqryworker2_2',        'kvpb6_11',              '', {'color':server_color, lab:'   13 '})
+    dg.edge('kvqryworker2_2',        'kvpb6_12',              '', {'color':server_color, lab:'   13 '})
     dg.edge('kvpb1_6',               'riakpb_5',              '', {'color':server_color, lab:'   14 '})
     dg.edge('riakpb5_4',             'riakc_3',               '', {'color':server_color, lab:'   15 '})
     
