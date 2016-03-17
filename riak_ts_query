@@ -17,22 +17,22 @@ digraph root {
 				riakc_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riakc</FONT></TD></TR><TR><TD>query</TD></TR></TABLE>> shape=rectangle]
 				riakpb_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riakc_pb_socket</FONT></TD></TR><TR><TD>handle_call</TD></TR></TABLE>> shape=rectangle]
 				riakpb_5 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riakc_pb_socket</FONT></TD></TR><TR><TD>handle_info</TD></TR></TABLE>> shape=rectangle]
-				kvpb_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_api_pb_server</FONT></TD></TR><TR><TD>connected</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_78.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				kvpb_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_api_pb_server</FONT></TD></TR><TR><TD>connected</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_70.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				kvqryqueue_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry_queue</FONT></TD></TR><TR><TD>handle_call</TD></TR></TABLE>> shape=rectangle]
 				kvqryworker_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry_worker</FONT></TD></TR><TR><TD>handle_info</TD></TR></TABLE>> shape=rectangle]
-				kvindexfsm_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_coverage_fsm</FONT></TD></TR><TR><TD>init</TD></TR></TABLE>> shape=rectangle]
+				kvindexfsm_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_coverage_fsm</FONT></TD></TR><TR><TD>init</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_15.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				kvindexfsm1_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_coverage_fsm</FONT></TD></TR><TR><TD>waiting_results</TD></TR></TABLE>> shape=rectangle]
-				kvindexfsm4_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_coverage_fsm</FONT></TD></TR><TR><TD>initialize</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_6.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				kvindexfsm4_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_coverage_fsm</FONT></TD></TR><TR><TD>initialize</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_5.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				corevnode_01 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode</FONT></TD></TR><TR><TD>handle_event</TD></TR></TABLE>> shape=rectangle]
 				corevnodeworkerpool_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode_worker_pool</FONT></TD></TR><TR><TD>handle_event</TD></TR></TABLE>> shape=rectangle]
-				corevnodeworker_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode_worker</FONT></TD></TR><TR><TD>handle_cast</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_14.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				corevnodeworker_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode_worker</FONT></TD></TR><TR><TD>handle_cast</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_13.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 		}
 		subgraph subgraph_2 {
 			graph [rank=same]
 				riakc_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riakc</FONT></TD></TR><TR><TD>server_call</TD></TR></TABLE>> shape=rectangle]
 				riakpb_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riakc_pb_socket</FONT></TD></TR><TR><TD>send_request</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_2.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				riakpb3_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_pb_codec</FONT></TD></TR><TR><TD>decode</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_5.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
-				kvpb4_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_pb_timeseries</FONT></TD></TR><TR><TD>decode</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_10.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				kvpb4_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_pb_timeseries</FONT></TD></TR><TR><TD>decode</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_9.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				kvqryqueue_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry_queue</FONT></TD></TR><TR><TD>do_push_query</TD></TR></TABLE>> shape=rectangle]
 				kvqryworker1_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry_worker</FONT></TD></TR><TR><TD>pop_next_query</TD></TR></TABLE>> shape=rectangle]
 				kvqryworker2_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry_worker</FONT></TD></TR><TR><TD>subqueries_done</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_0.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
@@ -40,23 +40,25 @@ digraph root {
 				kvindexfsm2_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_index_fsm</FONT></TD></TR><TR><TD>process_results</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_0.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				kvindexfsm3_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_index_fsm</FONT></TD></TR><TR><TD>finish</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_0.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				kvindexfsm4_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode_master</FONT></TD></TR><TR><TD>coverage</TD></TR></TABLE>> shape=rectangle]
-				corevnode_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode</FONT></TD></TR><TR><TD>active</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_5.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				cc0_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_index_fsm</FONT></TD></TR><TR><TD>module_info</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_11.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				corevnode_1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode</FONT></TD></TR><TR><TD>active</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_4.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				corevnodeworkerpool_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode_worker</FONT></TD></TR><TR><TD>handle_work</TD></TR></TABLE>> shape=rectangle]
 				corevnodeworker_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_worker</FONT></TD></TR><TR><TD>handle_work</TD></TR></TABLE>> shape=rectangle]
 		}
 		subgraph subgraph_3 {
 			graph [rank=same]
 				riakc_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">gen_server</FONT></TD></TR><TR><TD>call</TD></TR></TABLE>> shape=rectangle]
-				riakpb1_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_pb_codec</FONT></TD></TR><TR><TD>encode</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_0.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				riakpb1_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_pb_codec</FONT></TD></TR><TR><TD>encode</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_1.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				riakpb5_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riakc_pb_socket</FONT></TD></TR><TR><TD>send_caller</TD></TR></TABLE>> shape=rectangle]
-				kvpb5_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_api_pb_server</FONT></TD></TR><TR><TD>process_message</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_66.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				kvpb5_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_api_pb_server</FONT></TD></TR><TR><TD>process_message</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_60.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				kvqryqueue_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">queue</FONT></TD></TR><TR><TD>in</TD></TR></TABLE>> shape=rectangle]
-				kvqryworker1_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry_worker</FONT></TD></TR><TR><TD>execute_query</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_29.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				kvqryworker1_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry_worker</FONT></TD></TR><TR><TD>execute_query</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_27.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				kvindexfsm4_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode_master</FONT></TD></TR><TR><TD>proxy_cast</TD></TR></TABLE>> shape=rectangle]
 				kvindexfsm5_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_index_fsm</FONT></TD></TR><TR><TD>process_query_results</TD></TR></TABLE>> shape=rectangle]
+				cc1_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_index_fsm</FONT></TD></TR><TR><TD>init</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_0.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				corevnode_2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode</FONT></TD></TR><TR><TD>vnode_coverage</TD></TR></TABLE>> shape=rectangle]
 				corevnodeworkerpool_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">gen_server</FONT></TD></TR><TR><TD>cast</TD></TR></TABLE>> shape=rectangle]
-				corevnodeworker1_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">eleveldb</FONT></TD></TR><TR><TD>fold</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_8.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				corevnodeworker1_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">eleveldb</FONT></TD></TR><TR><TD>fold</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_9.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 		}
 		subgraph subgraph_4 {
 			graph [rank=same]
@@ -66,14 +68,16 @@ digraph root {
 				kvqryworker1_4 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry_worker</FONT></TD></TR><TR><TD>run_sub_qs_fn</TD></TR></TABLE>> shape=rectangle]
 				kvindexfsm4_4 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">gen_fsm</FONT></TD></TR><TR><TD>send_event</TD></TR></TABLE>> shape=rectangle]
 				kvindexfsm6_4 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_vnode</FONT></TD></TR><TR><TD>ack_keys</TD></TR></TABLE>> shape=rectangle]
+				cc1_1_4 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_coverage_fsm</FONT></TD></TR><TR><TD>maybe_start_timeout_timer</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_0.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				corevnode_6 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode_worker_pool</FONT></TD></TR><TR><TD>handle_work</TD></TR></TABLE>> shape=rectangle]
-				corevnodeworker2_4 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_vnode</FONT></TD></TR><TR><TD>result_fun_ack</TD></TR></TABLE>> shape=rectangle]
+				corevnodeworker2_4 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_vnode</FONT></TD></TR><TR><TD>result_fun_ack</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_2.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 		}
 		subgraph subgraph_5 {
 			graph [rank=same]
 				kvpb3_5 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_pb_timeseries</FONT></TD></TR><TR><TD>check_table_and_call</TD></TR></TABLE>> shape=rectangle]
-				kvpb1_6 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_api_pb_server</FONT></TD></TR><TR><TD>send_encoded_message_or_error</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_5.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				kvpb1_6 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_api_pb_server</FONT></TD></TR><TR><TD>send_encoded_message_or_error</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_4.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				kvqryworker1_5 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_index_fsm_sup</FONT></TD></TR><TR><TD>start_index_fsm</TD></TR></TABLE>> shape=rectangle]
+				cc2_5 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_coverage_fsm</FONT></TD></TR><TR><TD>plan_callback</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_0.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				corevnode_7 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">gen_fsm</FONT></TD></TR><TR><TD>send_event</TD></TR></TABLE>> shape=rectangle]
 				corevnodeworker2_5 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode</FONT></TD></TR><TR><TD>reply</TD></TR></TABLE>> shape=rectangle]
 				corevnodeworker3_5 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_vnode</FONT></TD></TR><TR><TD>finish_fold</TD></TR></TABLE>> shape=rectangle]
@@ -81,7 +85,8 @@ digraph root {
 		subgraph subgraph_6 {
 			graph [rank=same]
 				kvpb8_6 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_ts_util</FONT></TD></TR><TR><TD>get_table_ddl</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_1.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
-				kvqryworker4_6 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">supervisor</FONT></TD></TR><TR><TD>start_child</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_27.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				kvqryworker4_6 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">supervisor</FONT></TD></TR><TR><TD>start_child</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_26.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				cc3_6 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_coverage_fsm</FONT></TD></TR><TR><TD>process_results_callback</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_0.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 				corevnodeworker3_6 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_core_vnode</FONT></TD></TR><TR><TD>reply</TD></TR></TABLE>> shape=rectangle]
 		}
 		subgraph subgraph_7 {
@@ -109,7 +114,7 @@ digraph root {
 		subgraph subgraph_12 {
 			graph [rank=same]
 				kvpb2_12 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">gen_server</FONT></TD></TR><TR><TD>call</TD></TR></TABLE>> shape=rectangle]
-				kvpb6_12 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry</FONT></TD></TR><TR><TD>maybe_await_query_results</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_51.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
+				kvpb6_12 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">riak_kv_qry</FONT></TD></TR><TR><TD>maybe_await_query_results</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_47.png" scale="true"/></TD></TR></TABLE>> shape=rectangle]
 		}
 			riakc_0 -> riakc_1 [label="" arrowhead=none]
 			riakc_1 -> riakc_2
@@ -173,6 +178,11 @@ digraph root {
 			kvindexfsm1_1 -> kvindexfsm3_2
 			kvindexfsm2_2 -> kvindexfsm5_3
 			kvindexfsm2_2 -> kvindexfsm6_4
+			kvindexfsm_1 -> cc0_2
+			kvindexfsm_1 -> cc1_3
+			kvindexfsm_1 -> cc1_1_4
+			kvindexfsm_1 -> cc2_5
+			kvindexfsm_1 -> cc3_6
 			corevnodeworker_2 -> corevnodeworker1_3
 			corevnodeworker_2 -> corevnodeworker2_4
 			corevnodeworker_2 -> corevnodeworker3_5
@@ -180,7 +190,7 @@ digraph root {
 			riakpb4_4 -> kvpb_1 [label="" color=red label="    2 "]
 			kvpb2_12 -> kvqryqueue_2 [label="" color=cyan label="    3 "]
 			kvqryqueue_3 -> kvqryworker1_2 [label="" color=cyan label="    4 "]
-			kvqryworker4_6 -> kvindexfsm_0 [label="" color=red label="    5 "]
+			kvqryworker4_6 -> kvindexfsm_1 [label="" color=red dir=both label=<<TABLE border="0" cellborder="0"><TR><TD>5</TD></TR><TR><TD width="30" height="30" fixedsize="true"><IMG SRC="figs/pc_11.png" scale="true"/></TD></TR></TABLE>>]
 			kvindexfsm4_4 -> corevnode_1 [label="" color=red label="    6 "]
 			corevnode_7 -> corevnodeworkerpool_2 [label="" color=red label="    7 "]
 			corevnodeworkerpool_3 -> corevnodeworker_2 [label="" color=cyan label="    8 "]
