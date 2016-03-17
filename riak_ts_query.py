@@ -4,6 +4,7 @@ import graphviz as gv
 import functools
 import numpy
 import pylab
+import os
 
 #=======================================================================
 # A class for managing a node in a digraph
@@ -177,6 +178,9 @@ class Node:
 
     def constructLabel(self, tag, label, profilerActualDict, color=None):
 
+        if not os.path.isdir("figs"):
+            os.mkdir("figs")
+            
         if tag in profilerActualDict.keys():
             frac = profilerActualDict[tag]['frac']
         else:
