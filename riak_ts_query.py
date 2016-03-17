@@ -330,8 +330,18 @@ class DiGraph(Node):
             node.printNodes()
 
     def title(self, title):
-        self.dg.graph_attr['label'] = title
+        self.dg.graph_attr['label'] = self.tabularize(title)
         self.dg.graph_attr['labelloc'] = 't'
+
+    def tabularize(self, l):
+        if not isinstance(l, list):
+            ret = l
+        else:
+            ret = '<<TABLE border="0" cellborder="0">'
+            for el in l:
+                ret += '<TR><TD>' + el + '</TD></TR>'
+            ret += '</TABLE>>'
+        return ret
 
     def render(self, name):
         self.setDepth()
@@ -491,14 +501,15 @@ def pieGen(frac):
 #-----------------------------------------------------------------------
 
 def makeQueryGraph(outputPrefix,
-                   nQuery,
+                   nRecord, nQuery,
                    clientFileName,     serverFileName,
                    clientBaseFileName, serverBaseFileName,
                    clientCompFileName, profilerBaseFileName):
 
     test = DiGraph()
 
-    test.nQuery = int(nQuery)
+    test.nRecord = int(nRecord)
+    test.nQuery  = int(nQuery)
     
     test.ingestProfilerOutput(clientFileName,     serverFileName,
                               clientBaseFileName, serverBaseFileName,
@@ -759,7 +770,7 @@ def makeQueryGraph(outputPrefix,
     test.edge('riak_api_pb_server:send_encoded_message_or_error', 'riakc_pb_socket:handle_info',           {'color':server_color, 'label':' 15 '})
     test.edge('gen_server:reply',                                  'gen_server_call1',                     {'color':server_color, 'label':' 16 '})
 
-    test.title('RiakTS Query Path' + ' (' + str(int(test.totalUsec/(test.nQuery))) + ' &mu;s)')
+    test.title(['RiakTS Query Path', str(test.nRecord) + ' records per query', str(int(test.totalUsec/(test.nQuery))) + ' &mu;s per query'])
 
     test.render(outputPrefix)
     
