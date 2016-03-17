@@ -171,12 +171,12 @@ class Node:
         for node in self.nodes:
             node.setNodeAttr(nodeName, attr, val)
 
-    def setLabels(self, profilerActualDict):
+    def setLabels(self, profilerActualDict, nQuery):
         for node in self.nodes:
-            node.renderLabel(profilerActualDict)
-            node.setLabels(profilerActualDict)
+            node.renderLabel(profilerActualDict, nQuery)
+            node.setLabels(profilerActualDict, nQuery)
 
-    def constructLabel(self, tag, label, profilerActualDict, color=None):
+    def constructLabel(self, tag, label, profilerActualDict, nQuery, color=None):
 
         if not os.path.isdir("figs"):
             os.mkdir("figs")
@@ -186,6 +186,8 @@ class Node:
         else:
             frac = -1
 
+        print 'Found frac = ' + str(frac) + ' for label ' + label
+        
         if frac >= 0:
             pieGen(frac)
 
@@ -202,23 +204,23 @@ class Node:
             retLabel += '<TR><TD><FONT color="gray">' + substr[0] + '</FONT></TD></TR>'
             for i in range(1,n):
                 retLabel += '<TR><TD><FONT color="' + color + '">' + substr[i] + '</FONT></TD></TR>'
-                
+
         if frac >= 0:
             retLabel += '<TR><TD width="30" height="30" fixedsize="true">' + '<IMG SRC="figs/pc_' + str(int(frac)) + '.png" scale="true"/>' + '</TD></TR>'
-            retLabel += '<TR><TD><FONT color="gray">' + str(int(profilerActualDict[tag]['corrusec']/(self.nQuery))) + ' &mu;s</FONT></TD></TR>'
+            retLabel += '<TR><TD><FONT color="gray">' + str(int(profilerActualDict[tag]['corrusec']/nQuery)) + ' &mu;s</FONT></TD></TR>'
             
         retLabel += '</TABLE>>'
 
         return retLabel
     
-    def renderLabel(self, profilerActualDict):
+    def renderLabel(self, profilerActualDict, nQuery):
 
         label = self.attr['label']
         label = label.strip(' ')
 
         tag = getTag(self.attr, False)
 
-        retLabel = self.constructLabel(tag, label, profilerActualDict)
+        retLabel = self.constructLabel(tag, label, profilerActualDict, nQuery)
 
         if 'tag' not in self.attr.keys():
             self.attr['tag'] = self.attr['label']
@@ -281,6 +283,8 @@ class DiGraph(Node):
                 usec  = self.profilerActualDict[key]['usec']
                 count = self.profilerActualDict[key]['count']
 
+                print 'Label ' + key + ' usec = ' + str(usec) + ' base = ' + str(base)
+                
                 self.profilerActualDict[key]['corrusec'] = (usec - base) - (self.usecPerCount * count)
                 self.profilerActualDict[key]['frac'] = 100 * self.profilerActualDict[key]['corrusec']/self.totalUsec
                 
@@ -332,7 +336,7 @@ class DiGraph(Node):
     def render(self, name):
         self.setDepth()
         self.setShape()
-        self.setLabels(self.profilerActualDict)
+        self.setLabels(self.profilerActualDict, self.nQuery)
         self.constructSubgraphs()
         self.connectNodes()
         self.renderEdgeLabels()
@@ -379,8 +383,8 @@ class DiGraph(Node):
             if 'color' in attr.keys():
                 color = attr['color']
 
-            attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, color)
-            print 'Constructed edge label for ' + tag 
+            attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, color)
+
     def connectEdges(self):
         for edge in self.edges:
             self.dg.edge(sanitizeForGraphviz(edge[0]), sanitizeForGraphviz(edge[1]), **edge[2])
@@ -449,6 +453,7 @@ def parseProfilerOutput(fileName, labelDict):
             labelDict[label] = {}
             labelDict[label]['usec']  = float(usec[i])
             labelDict[label]['count'] = int(counts[i])
+            print 'Found usec = ' + usec[i] + 'for label ' + label
     else:
         for i in range(2, len(usec)):
             label = str(i)
@@ -493,7 +498,7 @@ def makeQueryGraph(outputPrefix,
 
     test = DiGraph()
 
-    test.nQuery = nQuery
+    test.nQuery = int(nQuery)
     
     test.ingestProfilerOutput(clientFileName,     serverFileName,
                               clientBaseFileName, serverBaseFileName,
