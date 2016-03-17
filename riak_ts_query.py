@@ -201,7 +201,7 @@ class Node:
                 
         if frac >= 0:
             retLabel += '<TR><TD width="30" height="30" fixedsize="true">' + '<IMG SRC="figs/pc_' + str(int(frac)) + '.png" scale="true"/>' + '</TD></TR>'
-            retLabel += '<TR><TD><FONT color="gray">' + str(int(profilerActualDict[tag]['corrusec']/(10000))) + ' &mu;s</FONT></TD></TR>'
+            retLabel += '<TR><TD><FONT color="gray">' + str(int(profilerActualDict[tag]['corrusec']/(self.nQuery))) + ' &mu;s</FONT></TD></TR>'
             
         retLabel += '</TABLE>>'
 
@@ -238,6 +238,7 @@ class DiGraph(Node):
         self.profilerActualDict   = {}
         self.totalTime = 0
         self.usecPerCount = 0
+        self.nQuery = 0
         
     def ingestProfilerOutput(self,
                              clientFileName,     serverFileName,
@@ -481,12 +482,15 @@ def pieGen(frac):
 #-----------------------------------------------------------------------
 
 def makeQueryGraph(outputPrefix,
+                   nQuery,
                    clientFileName,     serverFileName,
                    clientBaseFileName, serverBaseFileName,
                    clientCompFileName, profilerBaseFileName):
 
     test = DiGraph()
 
+    test.nQuery = nQuery
+    
     test.ingestProfilerOutput(clientFileName,     serverFileName,
                               clientBaseFileName, serverBaseFileName,
                               clientCompFileName, profilerBaseFileName)
@@ -746,7 +750,7 @@ def makeQueryGraph(outputPrefix,
     test.edge('riak_api_pb_server:send_encoded_message_or_error', 'riakc_pb_socket:handle_info',           {'color':server_color, 'label':' 15 '})
     test.edge('gen_server:reply',                                  'gen_server_call1',                     {'color':server_color, 'label':' 16 '})
 
-    test.title('RiakTS Query Path' + ' (' + str(int(test.totalUsec/(10000))) + ' &mu;s)')
+    test.title('RiakTS Query Path' + ' (' + str(int(test.totalUsec/(test.nQuery))) + ' &mu;s)')
 
     test.render(outputPrefix)
     
