@@ -186,8 +186,6 @@ class Node:
         else:
             frac = -1
 
-        print 'Found frac = ' + str(frac) + ' for label ' + label
-        
         if frac >= 0:
             pieGen(frac)
 
@@ -206,8 +204,15 @@ class Node:
                 retLabel += '<TR><TD><FONT color="' + color + '">' + substr[i] + '</FONT></TD></TR>'
 
         if frac >= 0:
+
+            if frac < 1.0:
+                fracStr = '&lt;1%'
+            else:
+                fracStr = str(int(frac)) + '%'
+
             retLabel += '<TR><TD width="30" height="30" fixedsize="true">' + '<IMG SRC="figs/pc_' + str(int(frac)) + '.png" scale="true"/>' + '</TD></TR>'
-            retLabel += '<TR><TD><FONT color="gray">' + str(int(profilerActualDict[tag]['corrusec']/nQuery)) + ' &mu;s</FONT></TD></TR>'
+            retLabel += '<TR><TD><FONT color="gray">' + str(int(profilerActualDict[tag]['corrusec']/nQuery)) + ' &mu;s (' + fracStr + ')</FONT></TD></TR>'
+
             
         retLabel += '</TABLE>>'
 
@@ -283,8 +288,6 @@ class DiGraph(Node):
                 usec  = self.profilerActualDict[key]['usec']
                 count = self.profilerActualDict[key]['count']
 
-                print 'Label ' + key + ' usec = ' + str(usec) + ' base = ' + str(base)
-                
                 self.profilerActualDict[key]['corrusec'] = (usec - base) - (self.usecPerCount * count)
                 self.profilerActualDict[key]['frac'] = 100 * self.profilerActualDict[key]['corrusec']/self.totalUsec
                 
@@ -339,7 +342,10 @@ class DiGraph(Node):
         else:
             ret = '<<TABLE border="0" cellborder="0">'
             for el in l:
-                ret += '<TR><TD>' + el + '</TD></TR>'
+                if isinstance(el, tuple):
+                    ret += '<TR><TD><FONT color="' + el[1] + '">' + el[0] + '</FONT></TD></TR>'
+                else:
+                    ret += '<TR><TD>' + el + '</TD></TR>'
             ret += '</TABLE>>'
         return ret
 
@@ -463,7 +469,6 @@ def parseProfilerOutput(fileName, labelDict):
             labelDict[label] = {}
             labelDict[label]['usec']  = float(usec[i])
             labelDict[label]['count'] = int(counts[i])
-            print 'Found usec = ' + usec[i] + 'for label ' + label
     else:
         for i in range(2, len(usec)):
             label = str(i)
@@ -604,7 +609,11 @@ def makeQueryGraph(outputPrefix,
                         )
                     ]
                 ),
-                {'label': 'riak_api_pb_server:send_encoded_message_or_error'}
+                (
+                    {'label': 'riak_api_pb_server:send_encoded_message_or_error'},
+                    {'label': 'riak_pb_codec:encode'},
+                    {'label': 'riak_api_pb_server:send_message'},
+                )
             ]
         )
     )
@@ -767,8 +776,8 @@ def makeQueryGraph(outputPrefix,
     test.edge('vnode_reply2',                                     'riak_kv_index_fsm:finish',              {'color':fsm_color,    'label':' 12 '})
     test.edge('riak_kv_index_fsm:finish',                         'riak_kv_qry_worker:subqueries_done',    {'color':server_color, 'label':' 13 '})
     test.edge('riak_kv_qry_worker:subqueries_done',               'riak_kv_qry:maybe_await_query_results', {'color':server_color, 'label':' 14 '})
-    test.edge('riak_api_pb_server:send_encoded_message_or_error', 'riakc_pb_socket:handle_info',           {'color':server_color, 'label':' 15 '})
-    test.edge('gen_server:reply',                                  'gen_server_call1',                     {'color':server_color, 'label':' 16 '})
+    test.edge('riak_api_pb_server:send_message',                  'riakc_pb_socket:handle_info',           {'color':server_color, 'label':' 15 '})
+    test.edge('gen_server:reply',                                 'gen_server_call1',                      {'color':server_color, 'label':' 16 '})
 
     test.title(['RiakTS Query Path', str(test.nRecord) + ' records per query', str(int(test.totalUsec/(test.nQuery))) + ' &mu;s per query'])
 
