@@ -857,7 +857,12 @@ def makeQueryGraph(outputPrefix,
                            clientBaseFileName, serverBaseFileName,
                            clientCompFileName, profilerBaseFileName)
 
-    test.title(['RiakTS Query Path', str(test.nRecord) + ' records per query', getTimeStr(test.totalUsec/test.nQuery) + ' per query'])
+    if test.nRecord > 1:
+        recStr = str(test.nRecord) + ' records per query'
+    else:
+        recStr = str(test.nRecord) + ' record per query'
+        
+    test.title(['RiakTS Query Path', recStr, getTimeStr(test.totalUsec/test.nQuery) + ' per query'])
 
     test.render(outputPrefix)
 
