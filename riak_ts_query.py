@@ -144,14 +144,16 @@ class Node:
     # Connect this node to its children, and its children to theirs
     #------------------------------------------------------------
 
-    def connectNodes(self, graph):
+    def connectNodes(self, graph, delta=False):
 
         # Connect this node to all of its children, and its children to theirs
-        
+
+        attr = {}
         for node in self.nodes:
-#            print 'Attempting to connect node ' + getTag(self.attr) + ' to ' + getTag(node.attr)
-            graph.edge(getTag(self.attr), getTag(node.attr))
-            node.connectNodes(graph)
+            if delta:
+                attr['color'] = 'gray'
+            graph.edge(getTag(self.attr), getTag(node.attr), **attr)
+            node.connectNodes(graph, delta)
 
         # And also connect the child nodes, else graphviz won't enforce ordering
 
@@ -171,12 +173,12 @@ class Node:
         for node in self.nodes:
             node.setNodeAttr(nodeName, attr, val)
 
-    def setLabels(self, profilerActualDict, nQuery):
+    def setLabels(self, profilerActualDict, nQuery, delta=False):
         for node in self.nodes:
-            node.renderLabel(profilerActualDict, nQuery)
-            node.setLabels(profilerActualDict, nQuery)
+            node.renderLabel(profilerActualDict, nQuery, delta)
+            node.setLabels(profilerActualDict, nQuery, delta)
 
-    def constructLabel(self, tag, label, profilerActualDict, nQuery, color=None):
+    def constructLabel(self, tag, label, profilerActualDict, nQuery, delta, color=None):
 
         if not os.path.isdir("figs"):
             os.mkdir("figs")
@@ -186,16 +188,37 @@ class Node:
         else:
             frac = -1
 
+        pieColor = 'red'
+        if delta and (numpy.abs(frac) < 1.0 or tag not in profilerActualDict.keys()):
+            self.attr['color'] = 'gray'
+            color = 'gray'
+            pieColor = 'white'
+        elif delta and frac < 0.0:
+            self.attr['color'] = 'darkgreen'
+            pieColor = 'darkgreen'
+            self.attr['penwidth'] = '2'
+            self.attr['style'] = 'filled'
+            self.attr['fillcolor'] = 'darkseagreen1'
+        else:
+            self.attr['color'] = 'red'
+            pieColor = 'red'
+            self.attr['penwidth'] = '2'
+            self.attr['style'] = 'filled'
+            self.attr['fillcolor'] = 'mistyrose'
+            
         if frac >= 0:
-            pieGen(frac)
-
+            pieGen(frac, pieColor)
+        elif delta and tag in profilerActualDict.keys():
+            pieGen(numpy.abs(frac), pieColor)
+            
         substr = label.split(':')
         n = len(substr)
         retLabel = '<<TABLE border="0" cellborder="0">'
 
         if color == None:
             color = 'black'
-            
+
+
         if n == 1:
             retLabel += '<TR><TD><FONT color="' + color + '">' + substr[0] + '</FONT></TD></TR>'
         else:
@@ -203,29 +226,45 @@ class Node:
             for i in range(1,n):
                 retLabel += '<TR><TD><FONT color="' + color + '">' + substr[i] + '</FONT></TD></TR>'
 
-        if frac >= 0:
+        if not delta and frac >= 0:
 
             if frac < 1.0:
-                fracStr = '&lt;1%'
+                fracStr = '&lt; 1%'
             else:
                 fracStr = str(int(frac)) + '%'
 
             retLabel += '<TR><TD width="30" height="30" fixedsize="true">' + '<IMG SRC="figs/pc_' + str(int(frac)) + '.png" scale="true"/>' + '</TD></TR>'
-            retLabel += '<TR><TD><FONT color="gray">' + str(int(profilerActualDict[tag]['corrusec']/nQuery)) + ' &mu;s (' + fracStr + ')</FONT></TD></TR>'
+            retLabel += '<TR><TD><FONT color="gray">' + getTimeStr(profilerActualDict[tag]['corrusec']/nQuery) + ' (' + fracStr + ')</FONT></TD></TR>'
 
+        elif delta and tag in profilerActualDict.keys():
+
+            if numpy.abs(frac) < 1.0:
+                if frac < 0.0:
+                    fracStr = '- &lt; 1%'
+                else:
+                    fracStr = '+ &lt; 1%'
+            elif frac < 0.0:
+                fracStr = str(int(frac)) + '%'
+            else:
+                fracStr = '+' + str(int(frac)) + '%'
+
+            timeStr = getTimeStr(profilerActualDict[tag]['corrusec']/nQuery, delta)
+                
+            retLabel += '<TR><TD width="30" height="30" fixedsize="true">' + '<IMG SRC="figs/pc_' + str(numpy.abs(int(frac))) + '.png" scale="true"/>' + '</TD></TR>'
+            retLabel += '<TR><TD><FONT color="gray">' + timeStr + ' (' + fracStr + ')</FONT></TD></TR>'
             
         retLabel += '</TABLE>>'
 
         return retLabel
     
-    def renderLabel(self, profilerActualDict, nQuery):
+    def renderLabel(self, profilerActualDict, nQuery, delta=False):
 
         label = self.attr['label']
         label = label.strip(' ')
 
         tag = getTag(self.attr, False)
 
-        retLabel = self.constructLabel(tag, label, profilerActualDict, nQuery)
+        retLabel = self.constructLabel(tag, label, profilerActualDict, nQuery, delta)
 
         if 'tag' not in self.attr.keys():
             self.attr['tag'] = self.attr['label']
@@ -250,6 +289,7 @@ class DiGraph(Node):
         self.totalTime = 0
         self.usecPerCount = 0
         self.nQuery = 0
+        self.isDelta = False
         
     def ingestProfilerOutput(self,
                              clientFileName,     serverFileName,
@@ -335,6 +375,8 @@ class DiGraph(Node):
     def title(self, title):
         self.dg.graph_attr['label'] = self.tabularize(title)
         self.dg.graph_attr['labelloc'] = 't'
+        self.dg.graph_attr['fontname'] = 'times'
+        self.dg.graph_attr['fontsize'] = '18'
 
     def tabularize(self, l):
         if not isinstance(l, list):
@@ -352,9 +394,9 @@ class DiGraph(Node):
     def render(self, name):
         self.setDepth()
         self.setShape()
-        self.setLabels(self.profilerActualDict, self.nQuery)
+        self.setLabels(self.profilerActualDict, self.nQuery, self.isDelta)
         self.constructSubgraphs()
-        self.connectNodes()
+        self.connectNodes(self.isDelta)
         self.renderEdgeLabels()
         self.connectEdges()
         self.dg.render(name)
@@ -386,9 +428,9 @@ class DiGraph(Node):
             cont = self.constructSubgraph(depth)
             depth = depth + 1
 
-    def connectNodes(self):
+    def connectNodes(self, delta=False):
         for node in self.nodes:
-            node.connectNodes(self.dg)
+            node.connectNodes(self.dg, delta)
 
     def renderEdgeLabels(self):
         for edge in self.edges:
@@ -399,10 +441,12 @@ class DiGraph(Node):
             if 'color' in attr.keys():
                 color = attr['color']
 
-            attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, color)
+            attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, self.isDelta, color)
 
     def connectEdges(self):
         for edge in self.edges:
+            if self.isDelta:
+                edge[2]['color'] = 'gray'
             self.dg.edge(sanitizeForGraphviz(edge[0]), sanitizeForGraphviz(edge[1]), **edge[2])
 
     def edge(self, head, tail, attr={}):
@@ -489,9 +533,22 @@ def parseProfilerOutput(fileName, labelDict):
 # Generate a pie-chart of fractional time
 #-----------------------------------------------------------------------
 
-def pieGen(frac):
+def getTimeStr(timeInUsec, delta=False):
+    if timeInUsec < 1000:
+        ts = str(int(timeInUsec)) + ' &mu;s'
+    elif timeInUsec < 1000000:
+        ts = str(int(float(timeInUsec)/1000)) + ' ms'
+    else:
+        ts = str(int(float(timeInUsec)/1000000)) + ' s'
+
+    if delta and timeInUsec >= 0.0:
+        return '+' + ts
+    else:
+        return ts
+
+def pieGen(frac, color):
     frac = int(frac)
-    colors = ['r', 'w']
+    colors = [color, 'w']
     fracs = [frac,100-frac]
 
     fig,ax = pylab.subplots(figsize=(1,1))
@@ -501,27 +558,7 @@ def pieGen(frac):
     pylab.savefig(fname)
     pylab.close(fig)
 
-#-----------------------------------------------------------------------
-# Make a graph of the query path
-#-----------------------------------------------------------------------
-
-def makeQueryGraph(outputPrefix,
-                   nRecord, nQuery,
-                   clientFileName,     serverFileName,
-                   clientBaseFileName, serverBaseFileName,
-                   clientCompFileName, profilerBaseFileName):
-
-    test = DiGraph()
-
-    test.nRecord = int(nRecord)
-    test.nQuery  = int(nQuery)
-    
-    test.ingestProfilerOutput(clientFileName,     serverFileName,
-                              clientBaseFileName, serverBaseFileName,
-                              clientCompFileName, profilerBaseFileName)
-    #------------------------------------------------------------
-    # Start of script
-    #------------------------------------------------------------
+def addQueryNodes(test):
     
     service_color = 'blue'
     fsm_color     = 'red'
@@ -779,12 +816,101 @@ def makeQueryGraph(outputPrefix,
     test.edge('riak_api_pb_server:send_message',                  'riakc_pb_socket:handle_info',           {'color':server_color, 'label':' 15 '})
     test.edge('gen_server:reply',                                 'gen_server_call1',                      {'color':server_color, 'label':' 16 '})
 
-    test.title(['RiakTS Query Path', str(test.nRecord) + ' records per query', str(int(test.totalUsec/(test.nQuery))) + ' &mu;s per query'])
-
-    test.render(outputPrefix)
-    
     return
 
+#-----------------------------------------------------------------------
+# Get a digraph object representing the query path
+#-----------------------------------------------------------------------
 
+def getQueryDiGraph(outputPrefix,
+                    nRecord, nQuery,
+                    clientFileName,     serverFileName,
+                    clientBaseFileName, serverBaseFileName,
+                    clientCompFileName, profilerBaseFileName):
+    
+    test = DiGraph()
+    
+    test.nRecord = int(nRecord)
+    test.nQuery  = int(nQuery)
+    
+    test.ingestProfilerOutput(clientFileName,     serverFileName,
+                              clientBaseFileName, serverBaseFileName,
+                              clientCompFileName, profilerBaseFileName)
 
-                            
+    addQueryNodes(test)
+
+    return test
+
+#-----------------------------------------------------------------------
+# Make a graph of the query path
+#-----------------------------------------------------------------------
+
+def makeQueryGraph(outputPrefix,
+                   nRecord, nQuery,
+                   clientFileName,     serverFileName,
+                   clientBaseFileName, serverBaseFileName,
+                   clientCompFileName, profilerBaseFileName):
+
+    test = getQueryDiGraph(outputPrefix,
+                           nRecord, nQuery,
+                           clientFileName,     serverFileName,
+                           clientBaseFileName, serverBaseFileName,
+                           clientCompFileName, profilerBaseFileName)
+
+    test.title(['RiakTS Query Path', str(test.nRecord) + ' records per query', getTimeStr(test.totalUsec/test.nQuery) + ' per query'])
+
+    test.render(outputPrefix)
+
+def getQueryDiGraphByConstruction(dirPrefix, nRecord, nQuery, outputPrefix):
+    
+    dirName = dirPrefix + '/ts_query_' + str(nRecord) + '_' + str(nQuery) + '_output'
+    clientFileName = dirName + '/client.txt'
+    serverFileName = dirName + '/server.txt'
+
+    clientBaseFileName = dirName + '/clientbase.txt'
+    serverBaseFileName = dirName + '/serverbase.txt'
+
+    clientCompFileName   = dirName + '/clientcomp.txt'
+    profilerBaseFileName = dirName + '/profbase.txt'
+    
+    graph = getQueryDiGraph(outputPrefix,
+                            nRecord, nQuery,
+                            clientFileName,     serverFileName,
+                            clientBaseFileName, serverBaseFileName,
+                            clientCompFileName, profilerBaseFileName)
+    return graph
+
+#-----------------------------------------------------------------------
+# Difference two digraphs
+#-----------------------------------------------------------------------
+
+def makeDiffGraph(dirPrefix, list1, list2, outputPrefix):
+
+    [nRecord1, nQuery1] = list1
+    [nRecord2, nQuery2] = list2
+
+    graph1 = getQueryDiGraphByConstruction(dirPrefix, nRecord1, nQuery1, outputPrefix)
+    graph2 = getQueryDiGraphByConstruction(dirPrefix, nRecord2, nQuery2, outputPrefix)
+
+    deltaStr = str(nRecord1) + ' &rarr; ' + str(nRecord2)
+    deltaTimeStr = '&Delta;t = ' + getTimeStr(graph2.totalUsec/(graph2.nQuery) - graph1.totalUsec/(graph1.nQuery), True)
+
+    graph1.title(['RiakTS Query Path', deltaStr + ' records per query', deltaTimeStr + ' per query'])
+
+    for key in graph1.profilerActualDict.keys():
+        if isinstance(graph1.profilerActualDict[key], dict):
+
+            graph1.profilerActualDict[key]['corrusec'] = graph2.profilerActualDict[key]['corrusec']/graph2.nQuery - graph1.profilerActualDict[key]['corrusec']/graph1.nQuery
+            
+            graph1.profilerActualDict[key]['frac'] = graph2.profilerActualDict[key]['frac'] - graph1.profilerActualDict[key]['frac']
+
+    graph1.nQuery = 1
+    graph1.isDelta = True
+
+    graph1.render(outputPrefix)
+
+def doit():
+    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1, 10000], [1000, 1000], 'test')
+    
+
+doit()
