@@ -193,13 +193,13 @@ class Node:
             self.attr['color'] = 'gray'
             color = 'gray'
             pieColor = 'white'
-        elif delta and frac < 0.0:
+        elif delta and frac <= 0.0:
             self.attr['color'] = 'darkgreen'
             pieColor = 'darkgreen'
             self.attr['penwidth'] = '2'
             self.attr['style'] = 'filled'
             self.attr['fillcolor'] = 'darkseagreen1'
-        else:
+        elif delta and frac > 0.0:
             self.attr['color'] = 'red'
             pieColor = 'red'
             self.attr['penwidth'] = '2'
@@ -910,7 +910,6 @@ def makeDiffGraph(dirPrefix, list1, list2, outputPrefix):
     graph1.render(outputPrefix)
 
 def doit():
-    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1, 10000], [1000, 1000], 'test')
-    
-
-doit()
+    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1, 10000], [100, 1000], 'ts_query_100-1')
+    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [100, 1000], [1000, 1000], 'ts_query_1000-100')
+    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1, 10000], [1000, 1000], 'ts_query_1000-1')
