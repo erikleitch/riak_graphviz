@@ -173,38 +173,50 @@ class Node:
         for node in self.nodes:
             node.setNodeAttr(nodeName, attr, val)
 
-    def setLabels(self, profilerActualDict, nQuery, delta=False):
+    def setLabels(self, profilerActualDict, nQuery, delta=False, deltaFrac=False, refUsec=0):
         for node in self.nodes:
-            node.renderLabel(profilerActualDict, nQuery, delta)
-            node.setLabels(profilerActualDict, nQuery, delta)
+            node.renderLabel(profilerActualDict, nQuery, delta, deltaFrac, refUsec)
+            node.setLabels(profilerActualDict, nQuery, delta, deltaFrac, refUsec)
 
-    def constructLabel(self, tag, label, profilerActualDict, nQuery, delta, color=None):
+    def constructLabel(self, tag, label, profilerActualDict, nQuery, delta, deltaFrac, refUsec, color=None):
 
         if not os.path.isdir("figs"):
             os.mkdir("figs")
             
         if tag in profilerActualDict.keys():
             frac = profilerActualDict[tag]['frac']
+
+            if deltaFrac:
+                val = frac
+                threshold = 1.0
+            else:
+                val = profilerActualDict[tag]['corrusec']
+                threshold = refUsec * 0.01
+                print 'REFUSEC = ' + str(refUsec)
         else:
             frac = -1
-
+            val = 0.0
+            threshold = 0.0
+            
         pieColor = 'red'
-        if delta and (numpy.abs(frac) < 1.0 or tag not in profilerActualDict.keys()):
+        if delta and (numpy.abs(val) < threshold or tag not in profilerActualDict.keys()):
             self.attr['color'] = 'gray'
             color = 'gray'
             pieColor = 'white'
-        elif delta and frac <= 0.0:
+        elif delta and val <= 0.0:
             self.attr['color'] = 'darkgreen'
             pieColor = 'darkgreen'
             self.attr['penwidth'] = '2'
             self.attr['style'] = 'filled'
             self.attr['fillcolor'] = 'darkseagreen1'
-        elif delta and frac > 0.0:
+            print 'Tag = ' + tag + ' val = ' + str(val) + ' thres = ' + str(threshold) + ' color = green'
+        elif delta and val > 0.0:
             self.attr['color'] = 'red'
             pieColor = 'red'
             self.attr['penwidth'] = '2'
             self.attr['style'] = 'filled'
             self.attr['fillcolor'] = 'mistyrose'
+            print 'Tag = ' + tag + ' val = ' + str(val) + ' thres = ' + str(threshold) + ' color = red'
             
         if frac >= 0:
             pieGen(frac, pieColor)
@@ -257,14 +269,14 @@ class Node:
 
         return retLabel
     
-    def renderLabel(self, profilerActualDict, nQuery, delta=False):
+    def renderLabel(self, profilerActualDict, nQuery, delta=False, deltaFrac=False, refUsec=0):
 
         label = self.attr['label']
         label = label.strip(' ')
 
         tag = getTag(self.attr, False)
 
-        retLabel = self.constructLabel(tag, label, profilerActualDict, nQuery, delta)
+        retLabel = self.constructLabel(tag, label, profilerActualDict, nQuery, delta, deltaFrac, refUsec)
 
         if 'tag' not in self.attr.keys():
             self.attr['tag'] = self.attr['label']
@@ -290,6 +302,8 @@ class DiGraph(Node):
         self.usecPerCount = 0
         self.nQuery = 0
         self.isDelta = False
+        self.deltaFrac = False
+        self.refUsec = 0.0
         
     def ingestProfilerOutput(self,
                              clientFileName,     serverFileName,
@@ -394,7 +408,7 @@ class DiGraph(Node):
     def render(self, name):
         self.setDepth()
         self.setShape()
-        self.setLabels(self.profilerActualDict, self.nQuery, self.isDelta)
+        self.setLabels(self.profilerActualDict, self.nQuery, self.isDelta, self.deltaFrac, self.refUsec)
         self.constructSubgraphs()
         self.connectNodes(self.isDelta)
         self.renderEdgeLabels()
@@ -441,7 +455,7 @@ class DiGraph(Node):
             if 'color' in attr.keys():
                 color = attr['color']
 
-            attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, self.isDelta, color)
+            attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, self.isDelta, self.deltaFrac, self.refUsec, color)
 
     def connectEdges(self):
         for edge in self.edges:
@@ -899,7 +913,7 @@ def hasKey(d, key):
     else:
         return 'False'
 
-def makeDiffGraph(dirPrefix, list1, list2, outputPrefix):
+def makeDiffGraph(dirPrefix, list1, list2, outputPrefix, deltaFrac):
 
     target1 = ''
     if len(list1) == 3:
@@ -929,9 +943,9 @@ def makeDiffGraph(dirPrefix, list1, list2, outputPrefix):
     if target1 != '':
         deltaStr = deltaStr + ' (' + target1 + ')'
     
-    deltaTimeStr = '&Delta;t = ' + getTimeStr(graph1.totalUsec/(graph2.nQuery) - graph2.totalUsec/(graph1.nQuery), True)
+    deltaTimeStr = '&Delta;t = ' + getTimeStr(graph1.totalUsec/(graph1.nQuery) - graph2.totalUsec/(graph2.nQuery), True)
 
-    delta = graph1.totalUsec/(graph2.nQuery) - graph2.totalUsec/(graph1.nQuery)
+    delta = graph1.totalUsec/(graph1.nQuery) - graph2.totalUsec/(graph2.nQuery)
     if delta < 0:
         color = 'darkgreen'
     else:
@@ -942,16 +956,20 @@ def makeDiffGraph(dirPrefix, list1, list2, outputPrefix):
     for key in graph1.profilerActualDict.keys():
         if isinstance(graph1.profilerActualDict[key], dict):
             graph1.profilerActualDict[key]['corrusec'] = graph1.profilerActualDict[key]['corrusec']/graph1.nQuery - graph2.profilerActualDict[key]['corrusec']/graph2.nQuery
-            
-            graph1.profilerActualDict[key]['frac'] = 100 * graph1.profilerActualDict[key]['corrusec']/(graph2.totalUsec/graph2.nQuery)
+            graph1.profilerActualDict[key]['frac'] = graph1.profilerActualDict[key]['frac'] - graph2.profilerActualDict[key]['frac']
 
-    graph1.nQuery = 1
-    graph1.isDelta = True
+    graph1.refUsec   = graph1.totalUsec/graph1.nQuery
+    graph1.nQuery    = 1
+    graph1.isDelta   = True
+    graph1.deltaFrac = deltaFrac
 
+                        
     graph1.render(outputPrefix)
 
 def doit():
 #    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1, 10000], [100, 1000], 'ts_query_100-1')
 #    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [100, 1000], [1000, 1000], 'ts_query_1000-100')
-    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000],               [1000, 1000], 'ts_query_1000-1')
-    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000,  'uc_debug7'], [1000, 1000], 'ts_query_1000_ttb-1000')
+    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000],               [1,   10000], 'ts_query_1000-1', True)
+    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000,  'uc_debug7'], [1000, 1000], 'ts_query_1000_ttb-1000', False)
+
+doit()
