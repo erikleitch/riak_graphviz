@@ -173,13 +173,15 @@ class Node:
         for node in self.nodes:
             node.setNodeAttr(nodeName, attr, val)
 
-    def setLabels(self, profilerActualDict, nQuery, delta=False, deltaFrac=False, refUsec=0):
+    def setLabels(self, profilerActualDict, nQuery, deltaTuple):
         for node in self.nodes:
-            node.renderLabel(profilerActualDict, nQuery, delta, deltaFrac, refUsec)
-            node.setLabels(profilerActualDict, nQuery, delta, deltaFrac, refUsec)
+            node.renderLabel(profilerActualDict, nQuery, deltaTuple)
+            node.setLabels(profilerActualDict, nQuery, deltaTuple)
 
-    def constructLabel(self, tag, label, profilerActualDict, nQuery, delta, deltaFrac, refUsec, color=None):
+    def constructLabel(self, tag, label, profilerActualDict, nQuery, deltaTuple, color=None):
 
+        (delta, deltaFrac, refUsec, threshold) = deltaTuple
+        
         if not os.path.isdir("figs"):
             os.mkdir("figs")
             
@@ -188,10 +190,8 @@ class Node:
 
             if deltaFrac:
                 val = frac
-                threshold = 1.0
             else:
                 val = profilerActualDict[tag]['corrusec']
-                threshold = refUsec * 0.01
                 print 'REFUSEC = ' + str(refUsec)
         else:
             frac = -1
@@ -269,14 +269,14 @@ class Node:
 
         return retLabel
     
-    def renderLabel(self, profilerActualDict, nQuery, delta=False, deltaFrac=False, refUsec=0):
+    def renderLabel(self, profilerActualDict, nQuery, deltaTuple):
 
         label = self.attr['label']
         label = label.strip(' ')
 
         tag = getTag(self.attr, False)
 
-        retLabel = self.constructLabel(tag, label, profilerActualDict, nQuery, delta, deltaFrac, refUsec)
+        retLabel = self.constructLabel(tag, label, profilerActualDict, nQuery, deltaTuple)
 
         if 'tag' not in self.attr.keys():
             self.attr['tag'] = self.attr['label']
@@ -408,7 +408,7 @@ class DiGraph(Node):
     def render(self, name):
         self.setDepth()
         self.setShape()
-        self.setLabels(self.profilerActualDict, self.nQuery, self.isDelta, self.deltaFrac, self.refUsec)
+        self.setLabels(self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold))
         self.constructSubgraphs()
         self.connectNodes(self.isDelta)
         self.renderEdgeLabels()
@@ -455,7 +455,7 @@ class DiGraph(Node):
             if 'color' in attr.keys():
                 color = attr['color']
 
-            attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, self.isDelta, self.deltaFrac, self.refUsec, color)
+            attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold), color)
 
     def connectEdges(self):
         for edge in self.edges:
@@ -913,7 +913,7 @@ def hasKey(d, key):
     else:
         return 'False'
 
-def makeDiffGraph(dirPrefix, list1, list2, outputPrefix, deltaFrac):
+def makeDiffGraph(dirPrefix, list1, list2, outputPrefix, deltaFrac, threshold):
 
     target1 = ''
     if len(list1) == 3:
@@ -959,9 +959,11 @@ def makeDiffGraph(dirPrefix, list1, list2, outputPrefix, deltaFrac):
             graph1.profilerActualDict[key]['frac'] = graph1.profilerActualDict[key]['frac'] - graph2.profilerActualDict[key]['frac']
 
     graph1.refUsec   = graph1.totalUsec/graph1.nQuery
-    graph1.nQuery    = 1
+    graph1.threshold = threshold
     graph1.isDelta   = True
     graph1.deltaFrac = deltaFrac
+
+    graph1.nQuery    = 1
 
                         
     graph1.render(outputPrefix)
@@ -969,7 +971,7 @@ def makeDiffGraph(dirPrefix, list1, list2, outputPrefix, deltaFrac):
 def doit():
 #    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1, 10000], [100, 1000], 'ts_query_100-1')
 #    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [100, 1000], [1000, 1000], 'ts_query_1000-100')
-    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000],               [1,   10000], 'ts_query_1000-1', True)
-    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000,  'uc_debug7'], [1000, 1000], 'ts_query_1000_ttb-1000', False)
+    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000],               [1,   10000], 'ts_query_1000-1', True, 1.0)
+    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000,  'uc_debug7'], [1000, 1000], 'ts_query_1000_ttb-1000', False, 1000.0)
 
 doit()
