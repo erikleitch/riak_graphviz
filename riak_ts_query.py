@@ -534,9 +534,9 @@ def parseProfilerOutput(fileName, labelDict):
 #-----------------------------------------------------------------------
 
 def getTimeStr(timeInUsec, delta=False):
-    if timeInUsec < 1000:
+    if numpy.abs(timeInUsec) < 1000:
         ts = str(int(timeInUsec)) + ' &mu;s'
-    elif timeInUsec < 1000000:
+    elif numpy.abs(timeInUsec) < 1000000:
         ts = str(int(float(timeInUsec)/1000)) + ' ms'
     else:
         ts = str(int(float(timeInUsec)/1000000)) + ' s'
@@ -866,9 +866,13 @@ def makeQueryGraph(outputPrefix,
 
     test.render(outputPrefix)
 
-def getQueryDiGraphByConstruction(dirPrefix, nRecord, nQuery, outputPrefix):
-    
-    dirName = dirPrefix + '/ts_query_' + str(nRecord) + '_' + str(nQuery) + '_output'
+def getQueryDiGraphByConstruction(dirPrefix, nRecord, nQuery, target, outputPrefix):
+
+    if target != '':
+        dirName = dirPrefix + '/ts_query_' + str(nRecord) + '_' + str(nQuery) + '_' + str(target) + '_output'
+    else:        
+        dirName = dirPrefix + '/ts_query_' + str(nRecord) + '_' + str(nQuery) + '_output'
+            
     clientFileName = dirName + '/client.txt'
     serverFileName = dirName + '/server.txt'
 
@@ -889,25 +893,57 @@ def getQueryDiGraphByConstruction(dirPrefix, nRecord, nQuery, outputPrefix):
 # Difference two digraphs
 #-----------------------------------------------------------------------
 
+def hasKey(d, key):
+    if key in d.keys():
+        return 'True'
+    else:
+        return 'False'
+
 def makeDiffGraph(dirPrefix, list1, list2, outputPrefix):
 
-    [nRecord1, nQuery1] = list1
-    [nRecord2, nQuery2] = list2
+    target1 = ''
+    if len(list1) == 3:
+        [nRecord1, nQuery1, target1] = list1
+    else:
+        [nRecord1, nQuery1] = list1
 
-    graph1 = getQueryDiGraphByConstruction(dirPrefix, nRecord1, nQuery1, outputPrefix)
-    graph2 = getQueryDiGraphByConstruction(dirPrefix, nRecord2, nQuery2, outputPrefix)
+    target2 = ''
+    if len(list2) == 3:
+        [nRecord2, nQuery2, target2] = list2
+    else:
+        [nRecord2, nQuery2] = list2
 
-    deltaStr = str(nRecord1) + ' &rarr; ' + str(nRecord2)
-    deltaTimeStr = '&Delta;t = ' + getTimeStr(graph2.totalUsec/(graph2.nQuery) - graph1.totalUsec/(graph1.nQuery), True)
+    graph1 = getQueryDiGraphByConstruction(dirPrefix, nRecord1, nQuery1, target1, outputPrefix)
+    graph2 = getQueryDiGraphByConstruction(dirPrefix, nRecord2, nQuery2, target2, outputPrefix)
 
-    graph1.title(['RiakTS Query Path', deltaStr + ' records per query', deltaTimeStr + ' per query'])
+    #------------------------------------------------------------
+    # Construct delta string
+    #------------------------------------------------------------
+    
+    deltaStr = str(nRecord2)
+    if target2 != '':
+        deltaStr = deltaStr + ' (' + target2 + ')'
+    deltaStr = deltaStr  + ' &rarr; '
+
+    deltaStr = deltaStr + str(nRecord1)
+    if target1 != '':
+        deltaStr = deltaStr + ' (' + target1 + ')'
+    
+    deltaTimeStr = '&Delta;t = ' + getTimeStr(graph1.totalUsec/(graph2.nQuery) - graph2.totalUsec/(graph1.nQuery), True)
+
+    delta = graph1.totalUsec/(graph2.nQuery) - graph2.totalUsec/(graph1.nQuery)
+    if delta < 0:
+        color = 'darkgreen'
+    else:
+        color = 'red'
+        
+    graph1.title(['RiakTS Query Path', deltaStr + ' records per query', (deltaTimeStr + ' per query', color)])
 
     for key in graph1.profilerActualDict.keys():
         if isinstance(graph1.profilerActualDict[key], dict):
-
-            graph1.profilerActualDict[key]['corrusec'] = graph2.profilerActualDict[key]['corrusec']/graph2.nQuery - graph1.profilerActualDict[key]['corrusec']/graph1.nQuery
+            graph1.profilerActualDict[key]['corrusec'] = graph1.profilerActualDict[key]['corrusec']/graph1.nQuery - graph2.profilerActualDict[key]['corrusec']/graph2.nQuery
             
-            graph1.profilerActualDict[key]['frac'] = graph2.profilerActualDict[key]['frac'] - graph1.profilerActualDict[key]['frac']
+            graph1.profilerActualDict[key]['frac'] = 100 * graph1.profilerActualDict[key]['corrusec']/(graph2.totalUsec/graph2.nQuery)
 
     graph1.nQuery = 1
     graph1.isDelta = True
@@ -915,6 +951,7 @@ def makeDiffGraph(dirPrefix, list1, list2, outputPrefix):
     graph1.render(outputPrefix)
 
 def doit():
-    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1, 10000], [100, 1000], 'ts_query_100-1')
-    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [100, 1000], [1000, 1000], 'ts_query_1000-100')
-    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1, 10000], [1000, 1000], 'ts_query_1000-1')
+#    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1, 10000], [100, 1000], 'ts_query_100-1')
+#    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [100, 1000], [1000, 1000], 'ts_query_1000-100')
+    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000],               [1000, 1000], 'ts_query_1000-1')
+    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000,  'uc_debug7'], [1000, 1000], 'ts_query_1000_ttb-1000')
