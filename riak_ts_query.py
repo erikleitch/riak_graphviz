@@ -217,7 +217,9 @@ class Node:
             self.attr['style'] = 'filled'
             self.attr['fillcolor'] = 'mistyrose'
             print 'Tag = ' + tag + ' val = ' + str(val) + ' thres = ' + str(threshold) + ' color = red'
-            
+
+        print 'Tag = ' + tag + ' frac = ' + str(frac) + ' val = ' + str(val)
+        
         if frac >= 0:
             pieGen(frac, pieColor)
         elif delta and tag in profilerActualDict.keys():
@@ -333,6 +335,7 @@ class DiGraph(Node):
         # correct for profiling, and convert to a fraction of total time
 
         for key in self.profilerActualDict.keys():
+            base = 0.0
             if key in self.profilerBaselineDict.keys():
                 if isinstance(self.profilerBaselineDict[key], dict):
                     base  = self.profilerBaselineDict[key]['usec']
@@ -457,6 +460,7 @@ class DiGraph(Node):
             if 'color' in attr.keys():
                 color = attr['color']
 
+            print 'Rendering edge label ' + label
             attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold), color)
 
     def connectEdges(self):
@@ -529,6 +533,7 @@ def parseProfilerOutput(fileName, labelDict):
             labelDict[label] = {}
             labelDict[label]['usec']  = float(usec[i])
             labelDict[label]['count'] = int(counts[i])
+            print 'READ LABEL ' + label + ' usec = ' + str(usec[i])
     else:
         for i in range(2, len(usec)):
             label = str(i)
@@ -553,7 +558,7 @@ def getTimeStr(timeInUsec, delta=False):
     if numpy.abs(timeInUsec) < 1000:
         ts = str(int(timeInUsec)) + ' &mu;s'
     elif numpy.abs(timeInUsec) < 1000000:
-        ts = str(int(float(timeInUsec)/1000)) + ' ms'
+        ts = str('%1.1f' % (float(timeInUsec)/1000)) + ' ms'
     else:
         ts = str(int(float(timeInUsec)/1000000)) + ' s'
 
@@ -704,7 +709,10 @@ def addQueryNodes(test):
                     ]
                 ),
             ),
-            {'label': 'riak_kv_qry_worker:add_subquery_result'},
+            (
+                {'label': 'riak_kv_qry_worker:add_subquery_result'},
+                {'label': 'riak_kv_qry_worker:decode_results'}
+            ),
             {'label': 'riak_kv_qry_worker:subqueries_done'},
         ]
     )
@@ -889,6 +897,9 @@ def getQueryDiGraphByConstruction(dirPrefix, optsList, outputPrefix):
     dirName = dirPrefix + '/ts_query_' + str(nRecord) + '_' + str(nQuery)
     if useFilter != None:
         dirName = dirName + '_' + str(useFilter)
+    else:
+        dirName = dirName + '_false'
+        
     if target != None:
         dirName = dirName + '_' + str(target)
 
@@ -1021,5 +1032,3 @@ def doit():
 #    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000],               [1,   10000], 'ts_query_1000-1', True, 1.0)
 #    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000,  'uc_debug7'], [1000, 1000], 'ts_query_1000_ttb-1000', False, 1000.0)
     makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000,  True], [1000, 1000], 'ts_query_1000_filter-none', False, 1000.0)
-
-doit()
