@@ -304,6 +304,7 @@ class DiGraph(Node):
         self.isDelta = False
         self.deltaFrac = False
         self.refUsec = 0.0
+        self.threshold = 1000
         
     def ingestProfilerOutput(self,
                              clientFileName,     serverFileName,
@@ -343,6 +344,7 @@ class DiGraph(Node):
                 count = self.profilerActualDict[key]['count']
 
                 self.profilerActualDict[key]['corrusec'] = (usec - base) - (self.usecPerCount * count)
+                print 'UNCORR key = ' + key + ' val = ' + str(usec) + ' base = ' + str(base) + ' usecpercount = ' + str(self.usecPerCount) + ' count = ' + str(count) + ' CORR = ' + str(self.profilerActualDict[key]['corrusec'])
                 self.profilerActualDict[key]['frac'] = 100 * self.profilerActualDict[key]['corrusec']/self.totalUsec
                 
     def calculateUsecPerCount(self, fileName):
@@ -880,12 +882,17 @@ def makeQueryGraph(outputPrefix,
 
     test.render(outputPrefix)
 
-def getQueryDiGraphByConstruction(dirPrefix, nRecord, nQuery, target, outputPrefix):
+def getQueryDiGraphByConstruction(dirPrefix, optsList, outputPrefix):
 
-    if target != '':
-        dirName = dirPrefix + '/ts_query_' + str(nRecord) + '_' + str(nQuery) + '_' + str(target) + '_output'
-    else:        
-        dirName = dirPrefix + '/ts_query_' + str(nRecord) + '_' + str(nQuery) + '_output'
+    [nRecord, nQuery, useFilter, target] = getOptList(optsList)
+
+    dirName = dirPrefix + '/ts_query_' + str(nRecord) + '_' + str(nQuery)
+    if useFilter != None:
+        dirName = dirName + '_' + str(useFilter)
+    if target != None:
+        dirName = dirName + '_' + str(target)
+
+    dirName = dirName + '_output'
             
     clientFileName = dirName + '/client.txt'
     serverFileName = dirName + '/server.txt'
@@ -913,35 +920,57 @@ def hasKey(d, key):
     else:
         return 'False'
 
+def getOptList(optList):
+    useFilter=None
+    target=None
+    if len(optList) == 2:
+        [nRecord, nQuery] = optList
+    elif len(optList) == 3:
+        [nRecord, nQuery, useFilter] = optList
+    elif len(optList) == 4:
+        [nRecord, nQuery, useFilter, target] = optList
+
+    if useFilter != None:
+        if useFilter:
+            useFilter = 'true'
+        else:
+            useFilter = 'false'
+            
+    return [nRecord, nQuery, useFilter, target]
+
+def getDeltaStr(list1, list2):
+
+    [nRecord1, nQuery1, useFilter1, target1] = getOptList(list1)
+    [nRecord2, nQuery2, useFilter2, target2] = getOptList(list2)
+
+    deltaStr = str(nRecord2)
+    if useFilter2 != None:
+        deltaStr = deltaStr + ' (' + str(useFilter2)
+    if target2 != None:
+        deltaStr = deltaStr + ', ' + target2
+    deltaStr = deltaStr + ')'        
+
+    deltaStr = deltaStr  + ' &rarr; '
+
+    deltaStr = str(nRecord1)
+    if useFilter1 != None:
+        deltaStr = deltaStr + ' (' + str(useFilter1)
+    if target1 != None:
+        deltaStr = deltaStr + ', ' + target2
+    deltaStr = deltaStr + ')'        
+
+    return deltaStr
+    
 def makeDiffGraph(dirPrefix, list1, list2, outputPrefix, deltaFrac, threshold):
 
-    target1 = ''
-    if len(list1) == 3:
-        [nRecord1, nQuery1, target1] = list1
-    else:
-        [nRecord1, nQuery1] = list1
-
-    target2 = ''
-    if len(list2) == 3:
-        [nRecord2, nQuery2, target2] = list2
-    else:
-        [nRecord2, nQuery2] = list2
-
-    graph1 = getQueryDiGraphByConstruction(dirPrefix, nRecord1, nQuery1, target1, outputPrefix)
-    graph2 = getQueryDiGraphByConstruction(dirPrefix, nRecord2, nQuery2, target2, outputPrefix)
+    graph1 = getQueryDiGraphByConstruction(dirPrefix, list1, outputPrefix)
+    graph2 = getQueryDiGraphByConstruction(dirPrefix, list2, outputPrefix)
 
     #------------------------------------------------------------
     # Construct delta string
     #------------------------------------------------------------
     
-    deltaStr = str(nRecord2)
-    if target2 != '':
-        deltaStr = deltaStr + ' (' + target2 + ')'
-    deltaStr = deltaStr  + ' &rarr; '
-
-    deltaStr = deltaStr + str(nRecord1)
-    if target1 != '':
-        deltaStr = deltaStr + ' (' + target1 + ')'
+    deltaStr = getDeltaStr(list1, list2)
     
     deltaTimeStr = '&Delta;t = ' + getTimeStr(graph1.totalUsec/(graph1.nQuery) - graph2.totalUsec/(graph2.nQuery), True)
 
@@ -955,6 +984,8 @@ def makeDiffGraph(dirPrefix, list1, list2, outputPrefix, deltaFrac, threshold):
 
     for key in graph1.profilerActualDict.keys():
         if isinstance(graph1.profilerActualDict[key], dict):
+            print 'Key = ' + key + ' t1 = ' + str(graph1.profilerActualDict[key]['corrusec']/graph1.nQuery)
+            print 'Key = ' + key + ' t2 = ' + str(graph2.profilerActualDict[key]['corrusec']/graph2.nQuery)
             graph1.profilerActualDict[key]['corrusec'] = graph1.profilerActualDict[key]['corrusec']/graph1.nQuery - graph2.profilerActualDict[key]['corrusec']/graph2.nQuery
             graph1.profilerActualDict[key]['frac'] = graph1.profilerActualDict[key]['frac'] - graph2.profilerActualDict[key]['frac']
 
@@ -971,7 +1002,8 @@ def makeDiffGraph(dirPrefix, list1, list2, outputPrefix, deltaFrac, threshold):
 def doit():
 #    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1, 10000], [100, 1000], 'ts_query_100-1')
 #    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [100, 1000], [1000, 1000], 'ts_query_1000-100')
-    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000],               [1,   10000], 'ts_query_1000-1', True, 1.0)
-    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000,  'uc_debug7'], [1000, 1000], 'ts_query_1000_ttb-1000', False, 1000.0)
+#    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000],               [1,   10000], 'ts_query_1000-1', True, 1.0)
+#    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000,  'uc_debug7'], [1000, 1000], 'ts_query_1000_ttb-1000', False, 1000.0)
+    makeDiffGraph('/Users/eml/projects/riak/riak_test/riak_test_query/', [1000, 1000,  True], [1000, 1000], 'ts_query_1000_filter-none', False, 1000.0)
 
 doit()
