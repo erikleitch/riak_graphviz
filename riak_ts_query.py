@@ -944,20 +944,36 @@ def getDeltaStr(list1, list2):
     [nRecord2, nQuery2, useFilter2, target2] = getOptList(list2)
 
     deltaStr = str(nRecord2)
+    openBrace = False
     if useFilter2 != None:
-        deltaStr = deltaStr + ' (' + str(useFilter2)
+        deltaStr = deltaStr + ' (filter = ' + str(useFilter2)
+        openBrace = True
     if target2 != None:
+        if ~openBrace:
+            deltaStr += '('
+        else:
+            deltaStr += ', '
         deltaStr = deltaStr + ', ' + target2
-    deltaStr = deltaStr + ')'        
+
+    if openBrace:
+        deltaStr = deltaStr + ')'        
 
     deltaStr = deltaStr  + ' &rarr; '
 
-    deltaStr = str(nRecord1)
+    deltaStr = deltaStr + str(nRecord1)
+    openBrace = False
     if useFilter1 != None:
-        deltaStr = deltaStr + ' (' + str(useFilter1)
+        deltaStr = deltaStr + ' (filter = ' + str(useFilter1)
+        openBrace = True
     if target1 != None:
         deltaStr = deltaStr + ', ' + target2
-    deltaStr = deltaStr + ')'        
+        if ~openBrace:
+            deltaStr += '('
+        else:
+            deltaStr += ', '
+
+    if openBrace:
+        deltaStr = deltaStr + ')'        
 
     return deltaStr
     
