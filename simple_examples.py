@@ -5,7 +5,7 @@ def graphModules(prefix):
     digraph = DiGraph({'format':'png'})
 
     node1 = Node({'label': 'module1', 'color': 'red'})
-    node2 = Node({'label': 'module1', 'color': 'blue'})
+    node2 = Node({'label': 'module2', 'color': 'blue'})
 
     digraph.append(node1)
     digraph.append(node2)
