@@ -1,32 +1,32 @@
 digraph root {
 	subgraph subgraph_0 {
 		graph [rank=same]
-			module1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="black">module1</FONT></TD></TR></TABLE>> color=blue shape=ellipse tag=module1]
+			module1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="black">module1</FONT></TD></TR></TABLE>> arrowhead=none color=blue shape=ellipse tag=module1]
 	}
 	subgraph subgraph_1 {
 		graph [rank=same]
-			module1_fn1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module1</FONT></TD></TR><TR><TD><FONT color="black">fn1</FONT></TD></TR></TABLE>> shape=rectangle tag="module1:fn1"]
+			module1_fn1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module1</FONT></TD></TR><TR><TD><FONT color="black">fn1</FONT></TD></TR></TABLE>> arrowhead=normal shape=rectangle tag="module1:fn1"]
 	}
 	subgraph subgraph_2 {
 		graph [rank=same]
-			module1_fn2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module1</FONT></TD></TR><TR><TD><FONT color="black">fn2</FONT></TD></TR></TABLE>> shape=rectangle tag="module1:fn2"]
-			module2_fn1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module2</FONT></TD></TR><TR><TD><FONT color="black">fn1</FONT></TD></TR></TABLE>> shape=rectangle tag="module2:fn1"]
+			module1_fn2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module1</FONT></TD></TR><TR><TD><FONT color="black">fn2</FONT></TD></TR></TABLE>> arrowhead=normal shape=rectangle tag="module1:fn2"]
+			module2_fn1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module2</FONT></TD></TR><TR><TD><FONT color="black">fn1</FONT></TD></TR></TABLE>> arrowhead=normal shape=rectangle tag="module2:fn1"]
 	}
 	subgraph subgraph_3 {
 		graph [rank=same]
-			module1_fn3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module1</FONT></TD></TR><TR><TD><FONT color="black">fn3</FONT></TD></TR></TABLE>> shape=rectangle tag="module1:fn3"]
-			module2_fn2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module2</FONT></TD></TR><TR><TD><FONT color="black">fn2</FONT></TD></TR></TABLE>> shape=rectangle tag="module2:fn2"]
+			module1_fn3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module1</FONT></TD></TR><TR><TD><FONT color="black">fn3</FONT></TD></TR></TABLE>> arrowhead=normal shape=rectangle tag="module1:fn3"]
+			module2_fn2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module2</FONT></TD></TR><TR><TD><FONT color="black">fn2</FONT></TD></TR></TABLE>> arrowhead=normal shape=rectangle tag="module2:fn2"]
 	}
 	subgraph subgraph_4 {
 		graph [rank=same]
-			module2_fn3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module2</FONT></TD></TR><TR><TD><FONT color="black">fn3</FONT></TD></TR></TABLE>> shape=rectangle tag="module2:fn3"]
+			module2_fn3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module2</FONT></TD></TR><TR><TD><FONT color="black">fn3</FONT></TD></TR></TABLE>> arrowhead=normal shape=rectangle tag="module2:fn3"]
 	}
-		module1 -> module1_fn1
-		module1_fn1 -> module1_fn2
-		module1_fn2 -> module1_fn3
-		module1 -> module2_fn1
-		module1 -> module2_fn2
-		module1 -> module2_fn3
+		module1 -> module1_fn1 [arrowhead=none]
+		module1_fn1 -> module1_fn2 [arrowhead=normal]
+		module1_fn2 -> module1_fn3 [arrowhead=normal]
+		module1 -> module2_fn1 [arrowhead=none]
+		module1 -> module2_fn2 [arrowhead=none]
+		module1 -> module2_fn3 [arrowhead=none]
 		module1_fn1 -> module2_fn1 [color=invis]
 		module2_fn1 -> module2_fn2 [color=invis]
 		module2_fn2 -> module2_fn3 [color=invis]

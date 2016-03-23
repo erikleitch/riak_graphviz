@@ -33,6 +33,11 @@ class Node:
             node.attr['shape'] = shape
             node.setShape(shape)
 
+    def setArrowhead(self, shape):
+        for node in self.nodes:
+            node.attr['arrowhead'] = shape
+            node.setArrowhead(shape)
+
     def getNodesAtDepth(self, depth, nodeList):
         for node in self.nodes:
             if node.node_attr['depth'] == depth:
@@ -152,6 +157,8 @@ class Node:
         for node in self.nodes:
             if delta:
                 attr['color'] = 'gray'
+            if 'arrowhead' in self.attr.keys():
+                attr['arrowhead'] = self.attr['arrowhead']
             graph.edge(getTag(self.attr), getTag(node.attr), **attr)
             node.connectNodes(graph, delta)
 
@@ -290,7 +297,7 @@ class DiGraph(Node):
     def __init__(self, attrDict={}):
         self.nodes = []
         self.attr = attrDict
-
+        
         if 'format' in self.attr.keys():
             outputFormat=self.attr['format']
         else:
@@ -389,6 +396,11 @@ class DiGraph(Node):
             node.attr['shape'] = 'ellipse'
             node.setShape('rectangle')
             
+    def setArrowhead(self):
+        for node in self.nodes:
+            node.attr['arrowhead'] = 'none'
+            node.setArrowhead('normal')
+
     def printNodes(self):
         for node in self.nodes:
             node.printNodes()
@@ -415,6 +427,7 @@ class DiGraph(Node):
     def render(self, name):
         self.setDepth()
         self.setShape()
+        self.setArrowhead()
         self.setLabels(self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold))
         self.constructSubgraphs()
         self.connectNodes(self.isDelta)
