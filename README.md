@@ -96,7 +96,7 @@ produces this diagram instead:
 Calls to ```append``` can be made sequentially on a node, or any
 supported syntax may be arbitrarily nested.  Thus the following code
 creates a call-stack of functions, the last of which is a call-stack
-with three sub-functions:
+of a function calling three sub-functions:
 
 ```python
     node = Node({'label':'module1', 'color': 'blue'})
