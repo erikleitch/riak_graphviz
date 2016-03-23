@@ -36,7 +36,7 @@ construct this hierarchy by appending to the nodes themselves, via the
 
 ## Creating a call stack
 
-```Node.append``` has flexible syntax: a tuple of values (i.e., ```(val1, val2,
+```Node.append()``` takes a single argument with a flexible syntax: a tuple of values (i.e., ```(val1, val2,
 val3)```) is interpreted as a call-stack, i.e., a set of nodes
 representing functions that call each other in turn, so the following code:
 
