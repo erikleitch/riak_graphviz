@@ -106,6 +106,27 @@ def graphFunctionListSameRank(prefix):
     digraph.append(node)
     digraph.render(prefix)
 
+def graphNested(prefix):
+    digraph = DiGraph({'format':'png'})
+    
+    node = Node({'label':'module1', 'color': 'blue'})
+    node.append(
+      (
+        {'label': 'module1:fn1'},
+	{'label': 'module1:fn2'},
+	(
+	  {'label': 'module1:fn3'},
+	  [	  
+	    {'label': 'module1:fn3_1'},
+	    {'label': 'module1:fn3_2'},
+	    {'label': 'module1:fn3_3'},
+	  ]
+	),
+      )
+    )
+    digraph.append(node)
+    digraph.render(prefix)
+
 def graphMultiModule(prefix):
     
     digraph = DiGraph({'format':'png'})
@@ -169,6 +190,7 @@ def graphMultiModuleWithEdge(prefix):
 graphModules('img/modules')
 graphCallStack('img/call_stack')
 graphFunctionList('img/function_list')
+graphNested('img/nested')
 graphBoth('img/both')
 graphFunctionListSameRank('img/function_list_same_rank')
 graphMultiModule('img/multi_module')

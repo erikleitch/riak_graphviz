@@ -81,6 +81,32 @@ node.setNodeAttr('module1', 'rank', 'same')
 digraph.append(node)
 ```
 
-produces this diagram:
+produces this diagram instead:
 
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/function_list_same_rank.png)
+
+## Nested node appends
+
+Calls to ```append`` can be made sequentially on a node, or any
+supported syntax may be arbitrarily nested.  Thus the following code
+creates a call-stack of functions, the last of which itself calls
+a list of three sub-functions:
+
+```python
+    node = Node({'label':'module1', 'color': 'blue'})
+    node.append(
+      (
+        {'label': 'module1:fn1'},
+	{'label': 'module1:fn2'},
+	(
+	  {'label': 'module1:fn3'},
+	  [	  
+	    {'label': 'module1:fn3_1'},
+	    {'label': 'module1:fn3_2'},
+	    {'label': 'module1:fn3_3'},
+	  ]
+	),
+      )
+    )
+    digraph.append(node)
+```
