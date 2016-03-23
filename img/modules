@@ -1,0 +1,7 @@
+digraph root {
+	subgraph subgraph_0 {
+		graph [rank=same]
+			module1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="black">module1</FONT></TD></TR></TABLE>> color=red shape=ellipse tag=module1]
+			module2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="black">module2</FONT></TD></TR></TABLE>> color=blue shape=ellipse tag=module2]
+	}
+}
