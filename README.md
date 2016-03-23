@@ -29,4 +29,22 @@ given the same rank, so when the plot is rendered, it will look like this:
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/modules.png)
 
 Each node object can have its own hierarchy of nodes.  You can
-construct this hierarchy by appending to the nodes themselves, via the ```python Node.append()``` function.  
+construct this hierarchy by appending to the nodes themselves, via the
+```Node.append()``` function.
+
+Append has flexible syntax: a tuple of values (i.e., ```(val1, val2,
+val3)```) is interpreted as a call-stack, i.e., a set of nodes
+representing functions that call each other in turn, so the following code:
+
+```python
+digraph = DiGraph({'format':'png'})
+node = Node({'label':'module1', 'color': 'red'})
+node.append(({'label': 'module:fn1'}, {'label': 'module:fn2'}, {'label': 'module:fn3'}))
+digraph.append(node)
+```
+
+produces this diagram:
+
+![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/callstack.png)
+
+
