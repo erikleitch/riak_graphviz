@@ -2,6 +2,10 @@
 
 riak_graphviz is a python library, built on graphviz.py, to make generating graphviz diagrams for erlang easy.
 
+You'll need graphviz installed to use this code, which you can get, for example,  via:
+
+```pip install graphviz```
+
 # Examples
 
 ## Creating a digraph
