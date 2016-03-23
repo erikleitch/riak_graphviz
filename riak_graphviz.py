@@ -209,16 +209,12 @@ class Node:
             self.attr['penwidth'] = '2'
             self.attr['style'] = 'filled'
             self.attr['fillcolor'] = 'darkseagreen1'
-            print 'Tag = ' + tag + ' val = ' + str(val) + ' thres = ' + str(threshold) + ' color = green'
         elif delta and val > 0.0:
             self.attr['color'] = 'red'
             pieColor = 'red'
             self.attr['penwidth'] = '2'
             self.attr['style'] = 'filled'
             self.attr['fillcolor'] = 'mistyrose'
-            print 'Tag = ' + tag + ' val = ' + str(val) + ' thres = ' + str(threshold) + ' color = red'
-
-        print 'Tag = ' + tag + ' frac = ' + str(frac) + ' val = ' + str(val)
         
         if frac >= 0:
             pieGen(frac, pieColor)
@@ -470,7 +466,6 @@ class DiGraph(Node):
             if 'color' in attr.keys():
                 color = attr['color']
 
-            print 'Rendering edge label ' + label
             attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold), color)
 
     def connectEdges(self):
