@@ -160,17 +160,17 @@ def graphMultiModuleWithEdge(prefix):
     
     digraph = DiGraph({'format':'png'})
 
-    node1 = Node({'label':'some_module1', 'color': 'red'})
+    node1 = Node({'label':'module1', 'color': 'red'})
 
     node1.append(
         (
             {'label': 'module1:fn1'},
             {'label': 'module1:fn2'},
-            {'label': 'module1:fn3'},
+            ({'label': 'module1:fn3'}, [{'label': 'module1:fn3_1'}, {'label': 'module1:fn3_2'}, {'label': 'module1:fn3_3'}]),
         )
     )
 
-    node2 = Node({'label':'some_module2', 'color': 'blue'})
+    node2 = Node({'label':'module2', 'color': 'blue'})
 
     node2.append(
         [
@@ -182,8 +182,8 @@ def graphMultiModuleWithEdge(prefix):
     
     digraph.append(node1)
     digraph.append(node2)
-
-    digraph.edge('module1:fn1', 'module2:fn3', {'color':'green'})
+    
+    digraph.edge('module2:fn3', 'module1:fn3_3', {'color':'green'})
     
     digraph.render(prefix)
 

@@ -139,3 +139,15 @@ digraph.append(node2)
 producing this diagram:
 
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/multi_module.png)
+
+## Edges
+
+Lastly, edges can be added between arbitrary nodes by using the ```DiGraph.edge()``` function:
+
+```python
+digraph.edge('module2:fn3', 'module1:fn3_3', {'color':'green'})
+```
+
+would produce the following output:
+
+![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/multi_module_with_edge.png)
