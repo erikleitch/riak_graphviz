@@ -91,15 +91,15 @@ def graphFunctionListSameRank(prefix):
     
     digraph = DiGraph({'format':'png'})
 
-    node = Node({'label':'some_module', 'color': 'blue'})
+    node = Node({'label':'module1', 'color': 'blue'})
 
-    node.setNodeAttr('some_module', 'rank', 'same')
+    node.setNodeAttr('module1', 'rank', 'same')
 
     node.append(
         [
-            {'label': 'module:fn1'},
-            {'label': 'module:fn2'},
-            {'label': 'module:fn3'},
+            {'label': 'module1:fn1'},
+            {'label': 'module1:fn2'},
+            {'label': 'module1:fn3'},
         ]
     )
     

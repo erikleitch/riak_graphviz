@@ -1,17 +1,17 @@
 digraph root {
 	subgraph subgraph_0 {
 		graph [rank=same]
-			some_module [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="black">some_module</FONT></TD></TR></TABLE>> color=blue shape=ellipse tag=some_module]
+			module1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="black">module1</FONT></TD></TR></TABLE>> color=blue shape=ellipse tag=module1]
 	}
 	subgraph subgraph_1 {
 		graph [rank=same]
-			module_fn1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module</FONT></TD></TR><TR><TD><FONT color="black">fn1</FONT></TD></TR></TABLE>> shape=rectangle tag="module:fn1"]
-			module_fn2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module</FONT></TD></TR><TR><TD><FONT color="black">fn2</FONT></TD></TR></TABLE>> shape=rectangle tag="module:fn2"]
-			module_fn3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module</FONT></TD></TR><TR><TD><FONT color="black">fn3</FONT></TD></TR></TABLE>> shape=rectangle tag="module:fn3"]
+			module1_fn1 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module1</FONT></TD></TR><TR><TD><FONT color="black">fn1</FONT></TD></TR></TABLE>> shape=rectangle tag="module1:fn1"]
+			module1_fn2 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module1</FONT></TD></TR><TR><TD><FONT color="black">fn2</FONT></TD></TR></TABLE>> shape=rectangle tag="module1:fn2"]
+			module1_fn3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">module1</FONT></TD></TR><TR><TD><FONT color="black">fn3</FONT></TD></TR></TABLE>> shape=rectangle tag="module1:fn3"]
 	}
-		some_module -> module_fn1
-		some_module -> module_fn2
-		some_module -> module_fn3
-		module_fn1 -> module_fn2 [color=invis]
-		module_fn2 -> module_fn3 [color=invis]
+		module1 -> module1_fn1
+		module1 -> module1_fn2
+		module1 -> module1_fn3
+		module1_fn1 -> module1_fn2 [color=invis]
+		module1_fn2 -> module1_fn3 [color=invis]
 }

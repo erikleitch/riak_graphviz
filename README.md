@@ -66,3 +66,21 @@ digraph.append(node)
 produces this diagram:
 
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/function_list.png)
+
+where the rank of the nodes indicates the order in which the functions
+are called (assumed to be represented by the order of the function in
+the list).  Setting the ```rank``` attribute to ```same``` for any
+node changes this behavior to put every list element at the same rank.
+Thus the following code
+
+```python
+digraph = DiGraph({'format':'png'})
+node = Node({'label':'module1', 'color': 'red'})
+node.append([{'label': 'module:fn1'}, {'label': 'module:fn2'}, {'label': 'module:fn3'}])
+node.setNodeAttr('module1', 'rank', 'same')
+digraph.append(node)
+```
+
+produces this diagram:
+
+![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/function_list_same_rank.png)
