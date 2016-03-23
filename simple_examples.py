@@ -214,7 +214,7 @@ def graphMultiModuleWithAttr(prefix):
     digraph.append(node1)
     digraph.append(node2)
     
-    digraph.edge('module2:fn3', 'module1:fn3_3', {'color':'green', 'dir':'both'})
+    digraph.edge('module2:fn3', 'module1:fn3_3', {'color':'green', 'dir':'both', 'label':'gen_server:send'})
     
     digraph.render(prefix)
 

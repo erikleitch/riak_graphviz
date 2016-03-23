@@ -44,5 +44,5 @@ digraph root {
 		module2 -> module2_fn3
 		module2_fn1 -> module2_fn2 [color=invis]
 		module2_fn2 -> module2_fn3 [color=invis]
-		module2_fn3 -> module1_fn3_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="green"> </FONT></TD></TR></TABLE>> color=green dir=both]
+		module2_fn3 -> module1_fn3_3 [label=<<TABLE border="0" cellborder="0"><TR><TD><FONT color="gray">gen_server</FONT></TD></TR><TR><TD><FONT color="green">send</FONT></TD></TR></TABLE>> color=green dir=both]
 }

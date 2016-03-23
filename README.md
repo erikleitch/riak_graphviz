@@ -89,10 +89,10 @@ produces this diagram instead:
 
 ## Nested node appends
 
-Calls to ```append`` can be made sequentially on a node, or any
+Calls to ```append``` can be made sequentially on a node, or any
 supported syntax may be arbitrarily nested.  Thus the following code
-creates a call-stack of functions, the last of which itself calls
-a list of three sub-functions:
+creates a call-stack of functions, the last of which is a call-stack
+with three sub-functions:
 
 ```python
     node = Node({'label':'module1', 'color': 'blue'})
@@ -177,7 +177,7 @@ node2.append(
 )
 node2.setNodeAttr('module1', 'rank', 'same')
 
-digraph.edge('module2:fn3', 'module1:fn3_3', {'color':'green', 'dir':'both'})
+digraph.edge('module2:fn3', 'module1:fn3_3', {'color':'green', 'dir':'both', 'label':'gen_fsm:send'})
 
 digraph.append(node1)
 digraph.append(node2)
