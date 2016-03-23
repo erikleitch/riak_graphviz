@@ -2,7 +2,7 @@ from riak_graphviz import Node, DiGraph
 
 def graphCallStack(prefix):
     
-    digraph = DiGraph()
+    digraph = DiGraph({'format':'png'})
 
     node = Node({'label':'some_module', 'color': 'red'})
 
@@ -19,7 +19,7 @@ def graphCallStack(prefix):
 
 def graphFunctionList(prefix):
     
-    digraph = DiGraph()
+    digraph = DiGraph({'format':'png'})
 
     node = Node({'label':'some_module', 'color': 'blue'})
 
@@ -36,7 +36,7 @@ def graphFunctionList(prefix):
 
 def graphBoth(prefix):
     
-    digraph = DiGraph()
+    digraph = DiGraph({'format':'png'})
 
     node = Node({'label':'some_module', 'color': 'red'})
 
@@ -61,7 +61,7 @@ def graphBoth(prefix):
 
 def graphFunctionList(prefix):
     
-    digraph = DiGraph()
+    digraph = DiGraph({'format':'png'})
 
     node = Node({'label':'some_module', 'color': 'blue'})
 
@@ -78,7 +78,7 @@ def graphFunctionList(prefix):
 
 def graphFunctionListSameRank(prefix):
     
-    digraph = DiGraph()
+    digraph = DiGraph({'format':'png'})
 
     node = Node({'label':'some_module', 'color': 'blue'})
 
@@ -97,7 +97,7 @@ def graphFunctionListSameRank(prefix):
 
 def graphMultiModule(prefix):
     
-    digraph = DiGraph()
+    digraph = DiGraph({'format':'png'})
 
     node1 = Node({'label':'some_module1', 'color': 'red'})
 
@@ -126,7 +126,7 @@ def graphMultiModule(prefix):
 
 def graphMultiModuleWithEdge(prefix):
     
-    digraph = DiGraph()
+    digraph = DiGraph({'format':'png'})
 
     node1 = Node({'label':'some_module1', 'color': 'red'})
 
@@ -155,11 +155,11 @@ def graphMultiModuleWithEdge(prefix):
     
     digraph.render(prefix)
 
-graphCallStack('call_stack')
-graphFunctionList('function_list')
-graphBoth('both')
-graphFunctionListSameRank('function_list_same_rank')
-graphMultiModule('multi_module')
-graphMultiModuleWithEdge('multi_module_with_edge')
+graphCallStack('img/call_stack')
+graphFunctionList('img/function_list')
+graphBoth('img/both')
+graphFunctionListSameRank('img/function_list_same_rank')
+graphMultiModule('img/multi_module')
+graphMultiModuleWithEdge('img/multi_module_with_edge')
 
 

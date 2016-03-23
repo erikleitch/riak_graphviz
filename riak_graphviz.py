@@ -294,7 +294,13 @@ class DiGraph(Node):
     def __init__(self, attrDict={}):
         self.nodes = []
         self.attr = attrDict
-        self.dg   = gv.Digraph('root')
+
+        if 'format' in self.attr.keys():
+            outputFormat=self.attr['format']
+        else:
+            outputFormat='png'
+            
+        self.dg   = gv.Digraph('root', format=outputFormat)
         self.node_attr = {'depth':0, 'frac':-1}
         self.edges = []
         self.profilerSelfDict     = {}
@@ -418,7 +424,7 @@ class DiGraph(Node):
         self.connectNodes(self.isDelta)
         self.renderEdgeLabels()
         self.connectEdges()
-        self.dg.render(name)
+        self.dg.render(filename=name)
 
     def setDepth(self):
         for node in self.nodes:
