@@ -4,6 +4,8 @@ riak_graphviz is a python library, built on graphviz.py, to make generating grap
 
 # Examples
 
+## Creating a digraph
+
 To create a new directional graph, and output the result as a .png file:
 
 ```python
@@ -106,3 +108,34 @@ a list of three sub-functions:
 producing this diagram:
 
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/nested.png)
+
+## Multiple modules
+
+Putting it all together, we can create a digraph with multiple modules
+by instantiating separate nodes:
+
+```python
+node1 = Node({'label':'module1', 'color': 'red'})
+node2 = Node({'label':'module2', 'color': 'blue'})
+```
+
+Each one can be configured as desired and appended to the digraph:
+
+```python
+node1.append(
+  (
+    {'label': 'module1:fn1'},
+    {'label': 'module1:fn2'},
+    ({'label': 'module1:fn3'}, [{'label': 'module1:fn3_1'}, {'label': 'module1:fn3_2'}, {'label': 'module1:fn3_3'}]),
+  )
+)
+
+node2.append([{'label': 'module2:fn1'}, {'label': 'module2:fn2'}, {'label': 'module2:fn3'}])
+node2.setNodeAttr('module1', 'rank', 'same')
+
+digraph.append(node1)
+digraph.append(node2)
+```
+producing this diagram:
+
+![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/multi_module.png)
