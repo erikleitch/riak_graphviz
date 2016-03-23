@@ -151,3 +151,38 @@ digraph.edge('module2:fn3', 'module1:fn3_3', {'color':'green'})
 would produce the following output:
 
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/multi_module_with_edge.png)
+
+## Attributes
+
+The dictionary passed with a node or edge definition can contain any of the supported graphviz attributes.  Thus the following code:
+
+```python
+node1 = Node({'label':'module1', 'color': 'red'})
+node2 = Node({'label':'module2', 'color': 'blue'})
+
+node1.append(
+  (
+    {'label': 'module1:fn1', 'color':'darkgreen'},
+    {'label': 'module1:fn2'},
+    ({'label': 'module1:fn3'}, [{'label': 'module1:fn3_1'}, {'label': 'module1:fn3_2'}, {'label': 'module1:fn3_3'}]),
+  )
+)
+
+node2.append(
+  [
+    {'label': 'module2:fn1'},
+    {'label': 'module2:fn2',  'style':'filled', 'fillcolor':'mistyrose'},
+    {'label': 'module2:fn3'}
+  ]
+)
+node2.setNodeAttr('module1', 'rank', 'same')
+
+digraph.edge('module2:fn3', 'module1:fn3_3', {'color':'green', 'dir':'both'})
+
+digraph.append(node1)
+digraph.append(node2)
+```
+
+produces the following diagram:
+
+![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/multi_module_with_attr.png)
