@@ -142,7 +142,7 @@ producing this diagram:
 
 ## Edges
 
-Lastly, edges can be added between arbitrary nodes by using the ```DiGraph.edge()``` function:
+Edges can be added between arbitrary nodes by using the ```DiGraph.edge()``` function:
 
 ```python
 digraph.edge('module2:fn3', 'module1:fn3_3', {'color':'green'})
