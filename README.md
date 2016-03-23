@@ -103,3 +103,6 @@ a list of three sub-functions:
     )
     digraph.append(node)
 ```
+producing this diagram:
+
+![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/nested.png)
