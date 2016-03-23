@@ -10,14 +10,21 @@ To create a new directional graph, and output the result as a .png file:
 from riak_graphviz import Node, DiGraph
 digraph = DiGraph({'format':'png'})
 ```
-Now we have our main digraph object.  Let's add some nodes to it
+Now we have our main digraph object.  Let's add some nodes to it and render it:
 
 ```python
-node = Node({'label':'module1', 'color': 'red'})
-node = Node({'label':'module2', 'color': 'blue'})
-digraph.append(node)
+node1 = Node({'label':'module1', 'color': 'red'})
+digraph.append(node1)
+
+node2 = Node({'label':'module2', 'color': 'blue'})
+digraph.append(node2)
+
+digraph.render('img/modules.png')
+
 ```
 
+All top-level nodes appended to a digraph are treated as modules, and
+given the same rank, so when the plot is rendered, it will look like this:
 
-![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/call_stack.png)
+![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/modules.png)
 
