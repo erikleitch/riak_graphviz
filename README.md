@@ -97,15 +97,8 @@ a list of three sub-functions:
     node.append(
       (
         {'label': 'module1:fn1'},
-	{'label': 'module1:fn2'},
-	(
-	  {'label': 'module1:fn3'},
-	  [	  
-	    {'label': 'module1:fn3_1'},
-	    {'label': 'module1:fn3_2'},
-	    {'label': 'module1:fn3_3'},
-	  ]
-	),
+        {'label': 'module1:fn2'},
+        ({'label': 'module1:fn3'}, [{'label': 'module1:fn3_1'}, {'label': 'module1:fn3_2'}, {'label': 'module1:fn3_3'}]),
       )
     )
     digraph.append(node)
