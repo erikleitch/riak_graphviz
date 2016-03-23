@@ -32,7 +32,7 @@ given the same rank, so when the plot is rendered, it will look like this:
 
 Each node object can have its own hierarchy of nodes.  You can
 construct this hierarchy by appending to the nodes themselves, via the
-```Node.append()``` function.
+```Node.append()``` function, as detailed below:
 
 ## Creating a call stack
 
