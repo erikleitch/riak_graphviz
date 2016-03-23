@@ -15,13 +15,13 @@ def graphCallStack(prefix):
     
     digraph = DiGraph({'format':'png'})
 
-    node = Node({'label':'some_module', 'color': 'red'})
+    node = Node({'label':'module1', 'color': 'red'})
 
     node.append(
         (
-            {'label': 'module:fn1'},
-            {'label': 'module:fn2'},
-            {'label': 'module:fn3'},
+            {'label': 'module1:fn1'},
+            {'label': 'module1:fn2'},
+            {'label': 'module1:fn3'},
         )
     )
     
@@ -32,13 +32,13 @@ def graphFunctionList(prefix):
     
     digraph = DiGraph({'format':'png'})
 
-    node = Node({'label':'some_module', 'color': 'blue'})
+    node = Node({'label':'module1', 'color': 'blue'})
 
     node.append(
         [
-            {'label': 'module:fn1'},
-            {'label': 'module:fn2'},
-            {'label': 'module:fn3'},
+            {'label': 'module1:fn1'},
+            {'label': 'module1:fn2'},
+            {'label': 'module1:fn3'},
         ]
     )
     
@@ -49,7 +49,7 @@ def graphBoth(prefix):
     
     digraph = DiGraph({'format':'png'})
 
-    node = Node({'label':'some_module', 'color': 'red'})
+    node = Node({'label':'module1', 'color': 'red'})
 
     node.append(
             (
