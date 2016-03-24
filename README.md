@@ -6,6 +6,8 @@ You'll need graphviz installed to use this code, which you can get, for example,
 
 ```pip install graphviz```
 
+or see the official graphviz site for other download options: http://www.graphviz.org
+
 Extensive (but weirdly awkward to navigate) documentation can be found at the official graphviz site: http://www.graphviz.org/Documentation.php
 
 # Examples
