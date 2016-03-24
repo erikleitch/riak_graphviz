@@ -1,19 +1,21 @@
 # Synopsis
 
 riak_graphviz is a python library, built on graphviz.py, intended to
-simplify generating graphviz diagrams for complex processes.  The
-primary functionality it adds to graphviz.py is ease of construction
-of complicated call stacks, and logical ordering of nodes through the use of
-subgraphs under the hood.
+simplify generating diagrams for complex processes.  The primary
+functionality it adds to graphviz.py is ease of construction of
+complicated call stacks, and logical ordering of nodes through the use
+of subgraphs under the hood.
 
 You'll need graphviz installed to use this code, which you can get,
 for example, via:
 
 ```pip install graphviz```
 
-or see the official graphviz site for other download options: http://www.graphviz.org
+or see the official graphviz site for other download options: http://www.graphviz.org.
 
-Extensive (but weirdly awkward to navigate) documentation can be found at the official graphviz site: http://www.graphviz.org/Documentation.php
+Extensive (but weirdly awkward to navigate) documentation about
+graphviz can be found at the official graphviz site:
+http://www.graphviz.org/Documentation.php
 
 # Examples
 
