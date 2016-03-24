@@ -6,6 +6,8 @@ You'll need graphviz installed to use this code, which you can get, for example,
 
 ```pip install graphviz```
 
+Extensive (but weirdly awkward to navigate) documentation can be found at the official graphviz site: http://www.graphviz.org/Documentation.php
+
 # Examples
 
 ## Creating a digraph
@@ -190,3 +192,5 @@ digraph.append(node2)
 produces the following diagram:
 
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/multi_module_with_attr.png)
+
+NB: Graphviz attributes are documented at http://soc.if.usp.br/manual/graphviz/html/info/attrs.html.
