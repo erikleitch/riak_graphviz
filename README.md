@@ -198,3 +198,9 @@ produces the following diagram:
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/multi_module_with_attr.png)
 
 NB: Graphviz attributes are documented at http://soc.if.usp.br/manual/graphviz/html/info/attrs.html.
+
+## Convenience Methods
+
+Constructing a monolithic argument to ```node.append()``` can be
+challenging to get right.  The Node class therefore also supports a
+few convenience functions to allow serial construction of the node hierarchy.

@@ -218,6 +218,20 @@ def graphMultiModuleWithAttr(prefix):
     
     digraph.render(prefix)
 
+def nodeTest():
+    d = DiGraph({'format':'png'})
+    node = Node({'label':'module'})
+    node.append(({'label':'node1'}, {'label':'node2'}, {'label':'node3'}))
+    node.appendTo('node2', {'label':'appended to node2'})
+
+    node.insertBefore('node2', {'label' : 'inserted before node2'})
+    node.insertAfter('node3', {'label' : 'inserted after node3'})
+
+    d.append(node)
+    d.render('img/nodetest')
+    
+    
+
 graphModules('img/modules')
 graphCallStack('img/call_stack')
 graphFunctionList('img/function_list')
@@ -228,4 +242,5 @@ graphMultiModule('img/multi_module')
 graphMultiModuleWithEdge('img/multi_module_with_edge')
 graphMultiModuleWithAttr('img/multi_module_with_attr')
 
+nodeTest()
 

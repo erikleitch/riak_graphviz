@@ -12,10 +12,17 @@ import os
 
 class Node:
 
-    def __init__(self, attrDict):
-        self.nodes = []
-        self.attr  = attrDict
-        self.node_attr = {'depth':0, 'frac':-1, 'rank':'descending'}
+    def __init__(self, args):
+        if isinstance(args, dict):
+            self.nodes = []
+            self.attr  = args
+            self.node_attr = {'depth':0, 'frac':-1, 'rank':'descending'}
+        elif isinstance(args, Node):
+            self.nodes = args.nodes
+            self.attr  = args.attr
+            self.node_attr = args.node_attr
+        else:
+            raise TypeError("constructor must be called with either a dictionary or a Node object")
         
     def setFrac(self, frac):
         self.frac = frac
@@ -98,52 +105,57 @@ class Node:
                 currNode = currNode.append(n)
             return currNode
 
-    def callsTo(self, node, to):
-        for n in self.nodes:
-            if getTag(n.attr) == sanitizeForGraphviz(node):
-                if isinstance(to, dict):
-                    n.append(to)
-                elif isinstance(to, list):
-                    currNode = n
-                    for ito in to:
-                        currNode = currNode.append(ito)
-            n.callsTo(node, to)
+    def appendTo(self, tag, node):
+        appendNode = self.findNode(tag)
+        if appendNode != None:
+            return appendNode.append(node)
 
-    def callsAfter(self, after, node):
-        index = 0
+    def insertBefore(self, tag, node):
+
+        [parent, index] = self.findParentOfNode(tag)
+
+        if parent != None:
+            inNode = Node(node)
+            return parent.nodes.insert(index, inNode)
+
+    def insertAfter(self, tag, node):
+
+        [parent, index] = self.findParentOfNode(tag)
+        if parent != None:
+            inNode = Node(node)
+            return parent.nodes.insert(index+1, inNode)
+            
+    def findNode(self, tag):
+        if getTag(self.attr) == sanitizeForGraphviz(tag):
+            return self
+        else:
+            for n in self.nodes:
+                node = n.findNode(tag)
+                if node != None:
+                    return node
+        return None
+
+    def findParentOfNode(self, tag):
+
+        # See if we are the parent
+
+        index=0
         for n in self.nodes:
+            print 'cmp ' + getTag(n.attr) + ' with ' + sanitizeForGraphviz(tag)
+            if getTag(n.attr) == sanitizeForGraphviz(tag):
+                return [self, index]
             index = index+1
-#            print 'Checking ' + n.attr['label'] + ' against ' + after
-            if getTag(n.attr) == sanitizeForGraphviz(after):
- #               print 'Inserting ' + after + ' at index ' + str(index)
-                self.insert(index, node)
-                return
-            n.callsAfter(after, node)
 
-    def callsBefore(self, before, node):
-        index = 0
+        # Else see if one of our children is the parent
+        
         for n in self.nodes:
-  #          print '(B) Checking ' + n.attr['label'] + ' against ' + before
-            if getTag(n.attr) == sanitizeForGraphviz(before):
-   #             print 'Inserting...'
-                self.insert(index, node)
-                return
-                index = index+1
-            index = index+1
-            n.callsBefore(before, node)
+            [node, index] = n.findParentOfNode(tag)
+            if node != None:
+                return [node, index]
 
-    def insert(self, index, node):
-        if isinstance(node, Node):
-            self.nodes.insert(index, node)
-        elif isinstance(node, dict):
-            n = Node(node)
-            self.nodes.insert(index, n)
-        elif isinstance(node, list):
-            topNode = Node(node[0])
-            currNode = topNode
-            for i in range(1,len(node)):
-                currNode = currNode.append(node[i])
-            self.nodes.insert(index, topNode)
+        # Else return None
+        
+        return [None, 0]
 
     #------------------------------------------------------------
     # Connect this node to its children, and its children to theirs
