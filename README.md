@@ -19,7 +19,10 @@ http://www.graphviz.org/Documentation.php
 
 # Examples
 
-## Creating a digraph
+* <a href="#digraph">Creating a Digraph</a>
+* <a href="#callstack">Creating a call stack</a>
+
+## <a name="digraph">Creating a Digraph</a>
 
 To create a new directional graph, and output the result as a .png file:
 
@@ -49,7 +52,7 @@ Each node object can have its own hierarchy of nodes.  You can
 construct this hierarchy by appending to the nodes themselves, via the
 ```Node.append()``` function, as detailed below:
 
-## Creating a call stack
+## <a name="callstack">Creating a call stack</a>
 
 ```Node.append()``` takes a single argument with a flexible syntax: a tuple of values (i.e., ```(val1, val2,
 val3)```) is interpreted as a call-stack, i.e., a set of nodes
