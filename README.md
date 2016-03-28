@@ -28,8 +28,8 @@ http://www.graphviz.org/Documentation.php
 * <a href="#attr">Attributes</a>
 * <a href="#convenience">Convenience methods</a>
 
-Back to <a href="#examples">Examples</a>
 ## <a name="digraph">Creating a Digraph</a>
+Back to <a href="#examples">Examples</a>
 
 To create a new directional graph, and output the result as a .png file:
 
@@ -59,8 +59,8 @@ Each node object can have its own hierarchy of nodes.  You can
 construct this hierarchy by appending to the nodes themselves, via the
 ```Node.append()``` function, as detailed below:
 
-Back to <a href="#examples">Examples</a>
 ## <a name="callstack">Graphing a call stack</a>
+Back to <a href="#examples">Examples</a>
 
 ```Node.append()``` takes a single argument with a flexible syntax: a tuple of values (i.e., ```(val1, val2,
 val3)```) is interpreted as a call-stack, i.e., a set of nodes
@@ -77,8 +77,8 @@ produces this diagram:
 
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/call_stack.png)
 
-Back to <a href="#examples">Examples</a>
 ## <a name="fnlist">Graphing a function list</a>
+Back to <a href="#examples">Examples</a>
 
 On the other hand, a list of values (i.e., ```[val1, val2, val3]```)
 is interpreted as a simple list of functions, i.e., a set of nodes
@@ -114,8 +114,8 @@ produces this diagram instead:
 
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/function_list_same_rank.png)
 
-Back to <a href="#examples">Examples</a>
 ## <a name="nested">Nested node appends</a>
+Back to <a href="#examples">Examples</a>
 
 Calls to ```append``` can be made sequentially on a node, or any
 supported syntax may be arbitrarily nested.  Thus the following code
@@ -137,8 +137,8 @@ producing this diagram:
 
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/nested.png)
 
-Back to <a href="#examples">Examples</a>
 ## <a name="multi">Multiple modules</a>
+Back to <a href="#examples">Examples</a>
 
 Putting it all together, we can create a digraph with multiple modules
 by instantiating separate nodes:
@@ -169,8 +169,8 @@ producing this diagram:
 
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/multi_module.png)
 
-Back to <a href="#examples">Examples</a>
 ## <a name="edges">Edges</a>
+Back to <a href="#examples">Examples</a>
 
 Edges can be added between arbitrary nodes by using the ```DiGraph.edge()``` function:
 
@@ -182,8 +182,8 @@ would produce the following output:
 
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/multi_module_with_edge.png)
 
-Back to <a href="#examples">Examples</a>
 ## <a name="attr">Attributes</a>
+Back to <a href="#examples">Examples</a>
 
 The dictionary passed with a node or edge definition can contain any of the supported graphviz attributes.  Thus the following code:
 
@@ -220,8 +220,8 @@ produces the following diagram:
 
 NB: Graphviz attributes are documented at http://soc.if.usp.br/manual/graphviz/html/info/attrs.html.
 
-Back to <a href="#examples">Examples</a>
 ## <a name="convenience">Convenience methods</a>
+Back to <a href="#examples">Examples</a>
 
 Constructing complicated calling sequences with a single call to
 ```Node.append()``` can be challenging to get right.  riak_graphviz provides some convenience methods to make this easier.
