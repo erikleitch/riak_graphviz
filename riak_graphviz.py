@@ -107,17 +107,8 @@ class Node:
 
     def appendTo(self, tag, node):
         appendNode = self.findNode(tag)
-        print 'Found appendNode = ' + str(appendNode)
         if appendNode != None:
             return appendNode.append(node)
-
-    def insertBefore(self, tag, node):
-
-        [parent, index] = self.findParentOfNode(tag)
-
-        if parent != None:
-            inNode = Node(node)
-            return parent.nodes.insert(index, inNode)
 
     def insertBetween(self, tag1, tag2, node):
 
@@ -125,12 +116,6 @@ class Node:
         node2 = self.findNode(tag2)
         [parent1, index1] = self.findParentOfNode(tag1)
         [parent2, index2] = self.findParentOfNode(tag2)
-
-        print 'Found node1 = ' + str(node1)
-        print 'Found node2 = ' + str(node2)
-
-        print 'Found parent1 = ' + str(parent1)
-        print 'Found parent2 = ' + str(parent2)
 
         # Both nodes must exist in order to insert between them!
         
@@ -145,7 +130,7 @@ class Node:
             inNode = Node(node)
             return parent1.nodes.insert(index1+1,  inNode)
         
-        # Case 2: node1 is parent of node2 AND node2 is the first child of node1
+        # Case 2: node1 is parent of node2
         #
         # N1  becomes  N1
         # |            |
@@ -158,6 +143,9 @@ class Node:
             inNode.append(node2)
             node1.nodes.remove(node2)
             return node1.nodes.insert(index2+1, inNode)
+
+        else:
+            return None
             
     def findNode(self, tag):
         if getTag(self.attr) == sanitizeForGraphviz(tag):
@@ -175,7 +163,6 @@ class Node:
 
         index=0
         for n in self.nodes:
-            print 'cmp ' + getTag(n.attr) + ' with ' + sanitizeForGraphviz(tag)
             if getTag(n.attr) == sanitizeForGraphviz(tag):
                 return [self, index]
             index = index+1

@@ -242,42 +242,15 @@ def graphMultiModuleWithAttr(prefix):
     
     digraph.render(prefix)
 
-def nodeTest():
-    d = DiGraph({'format':'png'})
-    node = Node({'label':'module'})
-
-    node.append(
-        (
-            (
-                {'label':'node1'},
-                [
-                    {'label':'node1.1'},
-                    {'label':'node1.2'},
-                    {'label':'node2'},
-                ]
-            ),
-            {'label':'node3'}
-        )
-    )
-
-    node.insertBetween('node1.1', 'node1.2', {'label' : 'node1.15'})
-    node.insertBetween('node2', 'node3', {'label' : 'node2.5'})
-    node.appendTo('node1.15', {'label':'node1.15.1'})
-    
-    d.append(node)
-    d.render('img/nodetest')
-    
-
-#graphModules('img/modules')
-#graphCallStack('img/call_stack')
-#graphFunctionList('img/function_list')
-#graphNested('img/nested')
+graphModules('img/modules')
+graphCallStack('img/call_stack')
+graphFunctionList('img/function_list')
+graphNested('img/nested')
 graphNested2('img/nested2')
-#graphBoth('img/both')
-#graphFunctionListSameRank('img/function_list_same_rank')
-#graphMultiModule('img/multi_module')
-#graphMultiModuleWithEdge('img/multi_module_with_edge')
-#graphMultiModuleWithAttr('img/multi_module_with_attr')
+graphBoth('img/both')
+graphFunctionListSameRank('img/function_list_same_rank')
+graphMultiModule('img/multi_module')
+graphMultiModuleWithEdge('img/multi_module_with_edge')
+graphMultiModuleWithAttr('img/multi_module_with_attr')
 
-#nodeTest()
 
