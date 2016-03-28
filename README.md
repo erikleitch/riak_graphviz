@@ -17,7 +17,7 @@ Extensive (but weirdly awkward to navigate) documentation about
 graphviz can be found at the official graphviz site:
 http://www.graphviz.org/Documentation.php
 
-# Examples
+# <a name="examples">Examples</a>
 
 * <a href="#digraph">Creating a Digraph</a>
 * <a href="#callstack">Graphing a call stack</a>
@@ -27,6 +27,8 @@ http://www.graphviz.org/Documentation.php
 * <a href="#edges">Edges</a>
 * <a href="#attr">Attributes</a>
 * <a href="#convenience">Convenience methods</a>
+
+Back to <a href="#examples">Examples</a>
 
 ## <a name="digraph">Creating a Digraph</a>
 
