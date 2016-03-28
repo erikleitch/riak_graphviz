@@ -127,6 +127,30 @@ def graphNested(prefix):
     digraph.append(node)
     digraph.render(prefix)
 
+def graphNested2(prefix):
+    digraph = DiGraph({'format':'png'})
+    
+    node1 = Node({'label':'module1', 'color': 'blue'})
+    node1.append({'label': 'module1:fn1'})
+
+    node2 = Node({'label': 'module1:fn3'})
+    node2.append([{'label':'module1:fn3_1'}, {'label':'module1:fn3_3'}])
+
+    # Append node2 to node1
+    
+    node1.appendTo('module1:fn1', node2)
+
+    # Now insert on node1
+    
+    node1.insertBetween('module1:fn1', 'module1:fn3', {'label':'module:fn2'})
+
+    # Now insert on node1
+    
+    node1.insertBetween('module1:fn3_1', 'module1:fn3_3', {'label':'module:fn3_2'})
+
+    digraph.append(node1)
+    digraph.render(prefix)
+
 def graphMultiModule(prefix):
     
     digraph = DiGraph({'format':'png'})
@@ -221,26 +245,39 @@ def graphMultiModuleWithAttr(prefix):
 def nodeTest():
     d = DiGraph({'format':'png'})
     node = Node({'label':'module'})
-    node.append(({'label':'node1'}, {'label':'node2'}, {'label':'node3'}))
-    node.appendTo('node2', {'label':'appended to node2'})
 
-    node.insertBefore('node2', {'label' : 'inserted before node2'})
-    node.insertAfter('node3', {'label' : 'inserted after node3'})
+    node.append(
+        (
+            (
+                {'label':'node1'},
+                [
+                    {'label':'node1.1'},
+                    {'label':'node1.2'},
+                    {'label':'node2'},
+                ]
+            ),
+            {'label':'node3'}
+        )
+    )
 
+    node.insertBetween('node1.1', 'node1.2', {'label' : 'node1.15'})
+    node.insertBetween('node2', 'node3', {'label' : 'node2.5'})
+    node.appendTo('node1.15', {'label':'node1.15.1'})
+    
     d.append(node)
     d.render('img/nodetest')
     
-    
 
-graphModules('img/modules')
-graphCallStack('img/call_stack')
-graphFunctionList('img/function_list')
-graphNested('img/nested')
-graphBoth('img/both')
-graphFunctionListSameRank('img/function_list_same_rank')
-graphMultiModule('img/multi_module')
-graphMultiModuleWithEdge('img/multi_module_with_edge')
-graphMultiModuleWithAttr('img/multi_module_with_attr')
+#graphModules('img/modules')
+#graphCallStack('img/call_stack')
+#graphFunctionList('img/function_list')
+#graphNested('img/nested')
+graphNested2('img/nested2')
+#graphBoth('img/both')
+#graphFunctionListSameRank('img/function_list_same_rank')
+#graphMultiModule('img/multi_module')
+#graphMultiModuleWithEdge('img/multi_module_with_edge')
+#graphMultiModuleWithAttr('img/multi_module_with_attr')
 
-nodeTest()
+#nodeTest()
 

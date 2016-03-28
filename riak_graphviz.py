@@ -107,6 +107,7 @@ class Node:
 
     def appendTo(self, tag, node):
         appendNode = self.findNode(tag)
+        print 'Found appendNode = ' + str(appendNode)
         if appendNode != None:
             return appendNode.append(node)
 
@@ -118,12 +119,45 @@ class Node:
             inNode = Node(node)
             return parent.nodes.insert(index, inNode)
 
-    def insertAfter(self, tag, node):
+    def insertBetween(self, tag1, tag2, node):
 
-        [parent, index] = self.findParentOfNode(tag)
-        if parent != None:
+        node1 = self.findNode(tag1)
+        node2 = self.findNode(tag2)
+        [parent1, index1] = self.findParentOfNode(tag1)
+        [parent2, index2] = self.findParentOfNode(tag2)
+
+        print 'Found node1 = ' + str(node1)
+        print 'Found node2 = ' + str(node2)
+
+        print 'Found parent1 = ' + str(parent1)
+        print 'Found parent2 = ' + str(parent2)
+
+        # Both nodes must exist in order to insert between them!
+        
+        if node1 == None or node2 == None:
+            return None
+
+        # Case 1: both nodes have the same parent.  In this case, insert at index1
+        #
+        # N1, N2  becomes N1, N, N2
+        
+        if parent1 == parent2:
             inNode = Node(node)
-            return parent.nodes.insert(index+1, inNode)
+            return parent1.nodes.insert(index1+1,  inNode)
+        
+        # Case 2: node1 is parent of node2 AND node2 is the first child of node1
+        #
+        # N1  becomes  N1
+        # |            |
+        # N2           N
+        #              |
+        #              N2
+        
+        elif parent2 == node1:
+            inNode = Node(node)
+            inNode.append(node2)
+            node1.nodes.remove(node2)
+            return node1.nodes.insert(index2+1, inNode)
             
     def findNode(self, tag):
         if getTag(self.attr) == sanitizeForGraphviz(tag):

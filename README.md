@@ -203,3 +203,55 @@ produces the following diagram:
 ![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/multi_module_with_attr.png)
 
 NB: Graphviz attributes are documented at http://soc.if.usp.br/manual/graphviz/html/info/attrs.html.
+
+## Convenience methods
+
+Constructing complicated calling sequences with a single call to
+```Node.append()``` can be challenging to get right.  riak_graphviz provides some convenience methods to make this easier.
+
+For example, the following code:
+
+```python
+
+    # Construct a single sequence all at one go:
+
+    node = Node({'label':'module1', 'color': 'blue'})
+    node.append(
+      (
+        {'label': 'module1:fn1'},
+        {'label': 'module1:fn2'},
+        ({'label': 'module1:fn3'}, [{'label': 'module1:fn3_1'}, {'label': 'module1:fn3_2'}, {'label': 'module1:fn3_3'}]),
+      )
+    )
+    digraph.append(node)
+```
+
+and this code:
+
+```python
+
+    # Construct a single node
+    
+    node1 = Node({'label':'module1', 'color': 'blue'})
+    node1.append({'label': 'module1:fn1'})
+
+    # Construct another node
+    
+    node2 = Node({'label': 'module1:fn3'})
+    node2.append([{'label':'module1:fn3_1'}, {'label':'module1:fn3_3'}])
+
+    # Now append node2 to node1
+    
+    node1.appendTo('module1:fn1', node2)
+
+    # Now insert on node1
+    
+    node1.insertBetween('module1:fn1', 'module1:fn3', {'label':'module:fn2'})
+    node1.insertBetween('module1:fn3_1', 'module1:fn3_3', {'label':'module:fn3_2'})
+
+    digraph.append(node1)
+```
+
+ both produce the same diagram below:
+ 
+![alt tag](https://github.com/erikleitch/riak_graphviz/blob/master/img/nested2.png)
