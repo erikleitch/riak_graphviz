@@ -220,7 +220,7 @@ class Node:
             node.renderLabel(profilerActualDict, nQuery, deltaTuple)
             node.setLabels(profilerActualDict, nQuery, deltaTuple)
 
-    def constructLabel(self, tag, label, profilerActualDict, nQuery, deltaTuple, color=None):
+    def constructLabel(self, tag, label, annotation, profilerActualDict, nQuery, deltaTuple, color=None):
 
         (delta, deltaFrac, refUsec, threshold) = deltaTuple
         
@@ -305,6 +305,9 @@ class Node:
             retLabel += '<TR><TD width="30" height="30" fixedsize="true">' + '<IMG SRC="figs/pc_' + str(numpy.abs(int(frac))) + '.png" scale="true"/>' + '</TD></TR>'
             retLabel += '<TR><TD><FONT color="gray">' + timeStr + ' (' + fracStr + ')</FONT></TD></TR>'
             
+        if annotation != None:
+            retLabel += '<TR><TD><FONT color="blue">' + annotation + '</FONT></TD></TR>'
+    
         retLabel += '</TABLE>>'
 
         return retLabel
@@ -316,7 +319,13 @@ class Node:
 
         tag = getTag(self.attr, False)
 
-        retLabel = self.constructLabel(tag, label, profilerActualDict, nQuery, deltaTuple)
+        if 'annotation' in self.attr.keys():
+            annotation = self.attr['annotation']
+            annotation = annotation.strip(' ')
+        else:
+            annotation = None
+            
+        retLabel = self.constructLabel(tag, label, annotation, profilerActualDict, nQuery, deltaTuple)
 
         if 'tag' not in self.attr.keys():
             self.attr['tag'] = self.attr['label']
@@ -514,7 +523,13 @@ class DiGraph(Node):
             if 'color' in attr.keys():
                 color = attr['color']
 
-            attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold), color)
+            if 'annotation' in self.attr.keys():
+                annotation = self.attr['annotation']
+                annotation = annotation.strip(' ')
+            else:
+                annotation = None
+
+            attr['label'] = self.constructLabel(tag, label, annotation, self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold), color)
 
     def connectEdges(self):
         for edge in self.edges:
