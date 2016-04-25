@@ -268,7 +268,6 @@ class Node:
         if color == None:
             color = 'black'
 
-
         if n == 1:
             retLabel += '<TR><TD><FONT color="' + color + '">' + substr[0] + '</FONT></TD></TR>'
         else:
@@ -304,7 +303,9 @@ class Node:
             retLabel += '<TR><TD><FONT color="gray">' + timeStr + ' (' + fracStr + ')</FONT></TD></TR>'
             
         if annotation != None:
-            retLabel += '<TR><TD><FONT color="blue">' + annotation + '</FONT></TD></TR>'
+            substr = annotation.split(':')
+            for sub in substr:
+                retLabel += '<TR><TD><FONT color="blue">' + sub + '</FONT></TD></TR>'
     
         retLabel += '</TABLE>>'
 
