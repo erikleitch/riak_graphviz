@@ -30,9 +30,11 @@ class Node:
     def setDepth(self, depth):
         for i in range(len(self.nodes)):
             if self.node_attr['rank'] == 'same':
-                self.nodes[i].node_attr['depth'] = depth + 1
+                if 'depth' not in self.node_attr.keys():
+                    self.nodes[i].node_attr['depth'] = depth + 1
             else:
-                self.nodes[i].node_attr['depth'] = depth + i + 1
+                if 'depth' not in self.node_attr.keys():
+                    self.nodes[i].node_attr['depth'] = depth + i + 1
             self.nodes[i].setDepth(self.nodes[i].node_attr['depth'])
 
     def setShape(self, shape):
