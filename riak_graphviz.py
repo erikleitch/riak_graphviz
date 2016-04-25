@@ -28,14 +28,15 @@ class Node:
         self.frac = frac
         
     def setDepth(self, depth):
+
+        if 'depth' not in self.attr.keys():
+            self.node_attr['depth'] = depth
+            
         for i in range(len(self.nodes)):
             if self.node_attr['rank'] == 'same':
-                if 'depth' not in self.node_attr.keys():
-                    self.nodes[i].node_attr['depth'] = depth + 1
+                self.nodes[i].setDepth(depth + 1)
             else:
-                if 'depth' not in self.node_attr.keys():
-                    self.nodes[i].node_attr['depth'] = depth + i + 1
-            self.nodes[i].setDepth(self.nodes[i].node_attr['depth'])
+                self.nodes[i].setDepth(depth + i + 1)
 
     def setShape(self, shape):
         for node in self.nodes:
