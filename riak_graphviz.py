@@ -68,7 +68,10 @@ class Node:
         
     def setShape(self, shape):
         for node in self.nodes:
-            node.attr['shape'] = shape
+            if 'shape' not in node.node_attr.keys():
+                node.attr['shape'] = shape
+            else:
+                node.attr['shape'] = node.node_attr['shape']
             node.setShape(shape)
 
     def setArrowhead(self, shape):
@@ -343,7 +346,7 @@ class Node:
 
             for sub in substr:
                 retLabel += '<TR><TD><FONT color="' + annotationcolor + '">' + sub + '</FONT></TD></TR>'
-    
+            
         retLabel += '</TABLE>>'
 
         return retLabel
@@ -467,7 +470,10 @@ class DiGraph(Node):
             
     def setShape(self):
         for node in self.nodes:
-            node.attr['shape'] = 'ellipse'
+            if 'shape' not in node.node_attr.keys():
+                node.attr['shape'] = 'ellipse'
+            else:
+                node.attr['shape'] = node.node_attr['shape']
             node.setShape('rectangle')
             
     def setArrowhead(self):
