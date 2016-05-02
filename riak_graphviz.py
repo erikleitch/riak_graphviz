@@ -79,7 +79,6 @@ class Node:
     def getNodesAtDepth(self, depth, nodeList):
         for node in self.nodes:
             if node.node_attr['depth'] == depth:
-                print 'Appending node ' + getTag(node.attr) + ' at depth ' + str(depth)
                 nodeList.append(node)
             nodeList = node.getNodesAtDepth(depth, nodeList)
         return nodeList
