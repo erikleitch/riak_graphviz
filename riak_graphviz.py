@@ -38,6 +38,34 @@ class Node:
             else:
                 self.nodes[i].setDepth(depth + i + 1)
 
+    def getMaxDepth(self):
+        maxDepth = self.node_attr['depth']
+        for node in self.nodes:
+            newMaxDepth = node.getMaxDepth()
+            if newMaxDepth > maxDepth:
+                maxDepth = newMaxDepth
+        return maxDepth
+
+    def getDeepestNode(self):
+        maxDepth = self.node_attr['depth']
+        maxNode  = self
+        for node in self.nodes:
+            newMaxDepth = node.getMaxDepth()
+            newMaxNode  = node.getDeepestNode()
+            if newMaxDepth > maxDepth:
+                maxDepth = newMaxDepth
+                maxNode  = newMaxNode
+        return maxNode
+
+    def appendInvisibleNode(self):
+        print 'Inside AIN'
+        name = getTag(self.attr) + '_sub'
+        depth = self.node_attr['depth']
+        print 'Would append ' + name + ' at depth ' + str(depth)
+        node  = self.append({'label': name, 'color':'blue'})
+        node.node_attr['depth'] = depth + 1
+        return node
+        
     def setShape(self, shape):
         for node in self.nodes:
             node.attr['shape'] = shape
@@ -51,6 +79,7 @@ class Node:
     def getNodesAtDepth(self, depth, nodeList):
         for node in self.nodes:
             if node.node_attr['depth'] == depth:
+                print 'Appending node ' + getTag(node.attr) + ' at depth ' + str(depth)
                 nodeList.append(node)
             nodeList = node.getNodesAtDepth(depth, nodeList)
         return nodeList
@@ -221,7 +250,7 @@ class Node:
             node.renderLabel(profilerActualDict, nQuery, deltaTuple)
             node.setLabels(profilerActualDict, nQuery, deltaTuple)
 
-    def constructLabel(self, tag, label, annotation, profilerActualDict, nQuery, deltaTuple, color=None):
+    def constructLabel(self, tag, label, profilerActualDict, nQuery, deltaTuple, color=None):
 
         (delta, deltaFrac, refUsec, threshold) = deltaTuple
         
@@ -305,10 +334,16 @@ class Node:
             retLabel += '<TR><TD width="30" height="30" fixedsize="true">' + '<IMG SRC="figs/pc_' + str(numpy.abs(int(frac))) + '.png" scale="true"/>' + '</TD></TR>'
             retLabel += '<TR><TD><FONT color="gray">' + timeStr + ' (' + fracStr + ')</FONT></TD></TR>'
             
-        if annotation != None:
+        if 'annotation' in self.attr.keys():
+            annotation = self.attr['annotation']
+            annotation = annotation.strip(' ')
             substr = annotation.split(':')
+            annotationcolor = 'blue'
+            if 'annotationcolor' in self.attr.keys():
+                annotationcolor = self.attr['annotationcolor']
+
             for sub in substr:
-                retLabel += '<TR><TD><FONT color="blue">' + sub + '</FONT></TD></TR>'
+                retLabel += '<TR><TD><FONT color="' + annotationcolor + '">' + sub + '</FONT></TD></TR>'
     
         retLabel += '</TABLE>>'
 
@@ -321,13 +356,7 @@ class Node:
 
         tag = getTag(self.attr, False)
 
-        if 'annotation' in self.attr.keys():
-            annotation = self.attr['annotation']
-            annotation = annotation.strip(' ')
-        else:
-            annotation = None
-            
-        retLabel = self.constructLabel(tag, label, annotation, profilerActualDict, nQuery, deltaTuple)
+        retLabel = self.constructLabel(tag, label, profilerActualDict, nQuery, deltaTuple)
 
         if 'tag' not in self.attr.keys():
             self.attr['tag'] = self.attr['label']
@@ -472,6 +501,9 @@ class DiGraph(Node):
 
     def render(self, name):
         self.setDepth()
+#        maxDepth = self.getMaxDepth()
+#        self.appendInvisibleNodesToDepth(maxDepth)
+#        self.setDepth()
         self.setShape()
         self.setArrowhead()
         self.setLabels(self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold))
@@ -481,6 +513,20 @@ class DiGraph(Node):
         self.connectEdges()
         self.dg.render(filename=name)
 
+    def printDeepestNodes(self):
+        for node in self.nodes:
+            maxNode = node.getDeepestNode()
+            print 'Deepest node for ' + node.attr['label'] + ' = ' + maxNode.attr['label'] + ' at depth ' + str(maxNode.node_attr['depth'])
+            maxNode.appendInvisibleNode()
+
+    def appendInvisibleNodesToDepth(self, depth):
+        for node in self.nodes:
+            deepestNode = node.getDeepestNode()
+            deepestDepth = deepestNode.node_attr['depth']
+            while deepestDepth < depth:
+                deepestNode = deepestNode.appendInvisibleNode()
+                deepestDepth = deepestNode.node_attr['depth']
+                
     def setDepth(self):
         for node in self.nodes:
             node.setDepth(0)
@@ -525,13 +571,7 @@ class DiGraph(Node):
             if 'color' in attr.keys():
                 color = attr['color']
 
-            if 'annotation' in self.attr.keys():
-                annotation = self.attr['annotation']
-                annotation = annotation.strip(' ')
-            else:
-                annotation = None
-
-            attr['label'] = self.constructLabel(tag, label, annotation, self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold), color)
+            attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold), color)
 
     def connectEdges(self):
         for edge in self.edges:
