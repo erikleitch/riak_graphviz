@@ -6,6 +6,8 @@ import numpy
 import pylab
 import os
 
+face="verdana"
+
 #=======================================================================
 # A class for managing a node in a digraph
 #=======================================================================
@@ -29,8 +31,10 @@ class Node:
         
     def setDepth(self, depth):
 
-        if 'depth' not in self.attr.keys():
+        if 'defDepth' not in self.node_attr.keys():
             self.node_attr['depth'] = depth
+        else:
+            self.node_attr['depth'] = self.node_attr['defDepth']
             
         for i in range(len(self.nodes)):
             if self.node_attr['rank'] == 'same':
@@ -226,6 +230,10 @@ class Node:
                 attr['color'] = 'gray'
             if 'arrowhead' in self.attr.keys():
                 attr['arrowhead'] = self.attr['arrowhead']
+
+            if 'color' in node.attr.keys() and node.attr['color'] == 'gray':
+                attr['color'] = 'gray'
+                
             graph.edge(getTag(self.attr), getTag(node.attr), **attr)
             node.connectNodes(graph, delta)
 
@@ -234,6 +242,11 @@ class Node:
         d = {'color':'invis'}
         for i in range(1, len(self.nodes)):
             graph.edge(getTag(self.nodes[i-1].attr), getTag(self.nodes[i].attr), **d)
+
+    def setAllAttr(self, attr, val):
+        self.attr[attr] = val
+        for node in self.nodes:
+            node.setAllAttr(attr, val)
 
     def setAttr(self, nodeName, attr, val):
         if sanitizeForGraphviz(nodeName) == getTag(self.attr):
@@ -299,15 +312,18 @@ class Node:
         n = len(substr)
         retLabel = '<<TABLE border="0" cellborder="0">'
 
+        if 'labelcolor' in self.attr.keys():
+            color = self.attr['labelcolor']
+
         if color == None:
             color = 'black'
 
         if n == 1:
-            retLabel += '<TR><TD><FONT color="' + color + '">' + substr[0] + '</FONT></TD></TR>'
+            retLabel += '<TR><TD><FONT face="' + face + '" color="' + color + '">' + substr[0] + '</FONT></TD></TR>'
         else:
-            retLabel += '<TR><TD><FONT color="gray">' + substr[0] + '</FONT></TD></TR>'
+            retLabel += '<TR><TD><FONT face="' + face + '" color="gray">' + substr[0] + '</FONT></TD></TR>'
             for i in range(1,n):
-                retLabel += '<TR><TD><FONT color="' + color + '">' + substr[i] + '</FONT></TD></TR>'
+                retLabel += '<TR><TD><FONT face="' + face + '" color="' + color + '">' + substr[i] + '</FONT></TD></TR>'
 
         if not delta and frac >= 0:
 
@@ -317,7 +333,7 @@ class Node:
                 fracStr = str(int(frac)) + '%'
 
             retLabel += '<TR><TD width="30" height="30" fixedsize="true">' + '<IMG SRC="figs/pc_' + str(int(frac)) + '.png" scale="true"/>' + '</TD></TR>'
-            retLabel += '<TR><TD><FONT color="gray">' + getTimeStr(profilerActualDict[tag]['corrusec']/nQuery) + ' (' + fracStr + ')</FONT></TD></TR>'
+            retLabel += '<TR><TD><FONT face="' + face + '" color="gray">' + getTimeStr(profilerActualDict[tag]['corrusec']/nQuery) + ' (' + fracStr + ')</FONT></TD></TR>'
 
         elif delta and tag in profilerActualDict.keys():
 
@@ -334,18 +350,27 @@ class Node:
             timeStr = getTimeStr(profilerActualDict[tag]['corrusec']/nQuery, delta)
                 
             retLabel += '<TR><TD width="30" height="30" fixedsize="true">' + '<IMG SRC="figs/pc_' + str(numpy.abs(int(frac))) + '.png" scale="true"/>' + '</TD></TR>'
-            retLabel += '<TR><TD><FONT color="gray">' + timeStr + ' (' + fracStr + ')</FONT></TD></TR>'
+            retLabel += '<TR><TD><FONT face="' + face + '" color="gray">' + timeStr + ' (' + fracStr + ')</FONT></TD></TR>'
             
         if 'annotation' in self.attr.keys():
             annotation = self.attr['annotation']
             annotation = annotation.strip(' ')
             substr = annotation.split(':')
-            annotationcolor = 'blue'
+
+            # Default to node-wide annotation color if one is set
+            
+            if 'annotationcolor' in self.node_attr.keys():
+                annotationcolor = self.node_attr['annotationcolor']
+            else:
+                annotationcolor = 'blue'
+
+            # But override with individual annotation color
+            
             if 'annotationcolor' in self.attr.keys():
                 annotationcolor = self.attr['annotationcolor']
 
             for sub in substr:
-                retLabel += '<TR><TD><FONT color="' + annotationcolor + '">' + sub + '</FONT></TD></TR>'
+                retLabel += '<TR><TD><FONT face="' + face + '" color="' + annotationcolor + '">' + sub + '</FONT></TD></TR>'
             
         retLabel += '</TABLE>>'
 
@@ -365,6 +390,11 @@ class Node:
             
         self.attr['label'] = retLabel
 
+    def grayOut(self):
+        self.setAllAttr('color', 'gray')
+        self.setAllAttr('labelcolor', 'gray')
+        self.setAllAttr('annotationcolor', 'gray')
+        
 #=======================================================================
 # Class for managing a digraph
 #=======================================================================
@@ -488,7 +518,7 @@ class DiGraph(Node):
     def title(self, title):
         self.dg.graph_attr['label'] = self.tabularize(title)
         self.dg.graph_attr['labelloc'] = 't'
-        self.dg.graph_attr['fontname'] = 'times'
+        self.dg.graph_attr['fontname'] = face
         self.dg.graph_attr['fontsize'] = '18'
 
     def tabularize(self, l):
@@ -498,7 +528,7 @@ class DiGraph(Node):
             ret = '<<TABLE border="0" cellborder="0">'
             for el in l:
                 if isinstance(el, tuple):
-                    ret += '<TR><TD><FONT color="' + el[1] + '">' + el[0] + '</FONT></TD></TR>'
+                    ret += '<TR><TD><FONT face="' + face + '" color="' + el[1] + '">' + el[0] + '</FONT></TD></TR>'
                 else:
                     ret += '<TR><TD>' + el + '</TD></TR>'
             ret += '</TABLE>>'
@@ -575,6 +605,8 @@ class DiGraph(Node):
 
             if 'color' in attr.keys():
                 color = attr['color']
+            else:
+                color = None
 
             attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold), color)
 
@@ -582,6 +614,15 @@ class DiGraph(Node):
         for edge in self.edges:
             if self.isDelta:
                 edge[2]['color'] = 'gray'
+
+            node1 = self.findNode(edge[0])
+            node2 = self.findNode(edge[1])
+            
+            if 'color' in node1.attr.keys() and node1.attr['color'] == 'gray':
+                edge[2]['color'] = 'gray'
+            if 'color' in node2.attr.keys() and node2.attr['color'] == 'gray':
+                edge[2]['color'] = 'gray'
+
             self.dg.edge(sanitizeForGraphviz(edge[0]), sanitizeForGraphviz(edge[1]), **edge[2])
 
     def edge(self, head, tail, attr={}):
@@ -606,9 +647,11 @@ def sanitizeForGraphviz(tag):
 def getTag(attr, sanitize=True):
     if 'tag' in attr.keys():
         tag = attr['tag']
-    else:
+    elif 'label' in attr.keys():
         tag = attr['label']
-
+    else:
+        return None
+    
     if sanitize:
         return sanitizeForGraphviz(tag)
     else:
