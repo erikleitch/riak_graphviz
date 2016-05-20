@@ -418,37 +418,64 @@ class DiGraph(Node):
         self.profilerActualDict   = {}
         self.totalTime = 0
         self.usecPerCount = 0
-        self.nQuery = 0
+        self.nOp = 0
         self.isDelta = False
         self.deltaFrac = False
         self.refUsec = 0.0
         self.threshold = 1000
-        
+
+    #------------------------------------------------------------
+    # Ingest simple profiler output, with specified label indicating the total time
+    #------------------------------------------------------------
+    
     def ingestProfilerOutput(self,
                              clientFileName,     serverFileName,
                              clientBaseFileName, serverBaseFileName,
-                             clientCompFileName, profilerBaseFileName):
+                             clientCompFileName, profilerBaseFileName,
+                             totalLabel):
 
-        compDict = parseProfilerOutput(clientCompFileName, {})
+        #------------------------------------------------------------
+        # If a comparison file was given, parse it now
+        #------------------------------------------------------------
+        
+        if clientCompFileName != None:
+            compDict = parseProfilerOutput(clientCompFileName, {})
 
+        #------------------------------------------------------------
+        # Now calculate usec per count from the profiler baseline file
+        #------------------------------------------------------------
+        
         self.calculateUsecPerCount(profilerBaseFileName)
+
+        #------------------------------------------------------------
+        # Read baselines from baseline files, if provided
+        #------------------------------------------------------------
+        
         self.calculateBaselines(clientBaseFileName, serverBaseFileName)
-        self.calculateTimes(clientFileName, serverFileName)
+
+        #------------------------------------------------------------
+        # Now read the actual profile times from the client and server files
+        #------------------------------------------------------------
+        
+        self.calculateTimes(clientFileName, serverFileName, totalLabel)
 
         # First correct the total time for the time spent profiling
 
         print 'Total (uncorrected) usec = ' + str(self.totalUsec)
         print 'Total count              = ' + str(self.totalCount)
         print 'usec per count           = ' + str(self.usecPerCount)
-        
 
         self.totalUsec -= (self.totalCount * self.usecPerCount)
 
         print 'Total (corrected) usec   = ' + str(self.totalUsec)
-        print 'Comp time (usec)         = ' + str(compDict['firstusec'])
+
+        if clientCompFileName != None:
+            print 'Comp time (usec)         = ' + str(compDict['firstusec'])
         
+        #------------------------------------------------------------
         # Next, for each label encountered, subtract off baselines,
         # correct for profiling, and convert to a fraction of total time
+        #------------------------------------------------------------
 
         for key in self.profilerActualDict.keys():
             base = 0.0
@@ -465,30 +492,62 @@ class DiGraph(Node):
                 self.profilerActualDict[key]['corrusec'] = (usec - base) - (self.usecPerCount * count)
                 print 'UNCORR key = ' + key + ' val = ' + str(usec) + ' base = ' + str(base) + ' usecpercount = ' + str(self.usecPerCount) + ' count = ' + str(count) + ' CORR = ' + str(self.profilerActualDict[key]['corrusec'])
                 self.profilerActualDict[key]['frac'] = 100 * self.profilerActualDict[key]['corrusec']/self.totalUsec
-                
+
+    #------------------------------------------------------------
+    # If a non-null fileName was passed, it should contain a measure
+    # of total time taken just to exercise the profiler.  This will be
+    # used to calculate usec per count, and will be used to subtract
+    # an estimate of the time taken for the profiling itself
+    #------------------------------------------------------------
+        
     def calculateUsecPerCount(self, fileName):
-        self.profilerSelfDict = parseProfilerOutput(fileName, self.profilerSelfDict)
-        baseUsec   = self.profilerSelfDict['ts_query_profiler_baseline:confirm']['usec']
-        baseCounts = self.profilerSelfDict['ts_query_profiler_baseline:confirm']['count']
-        self.usecPerCount = float(baseUsec) / float(baseCounts)
+        if fileName != None:
+            self.profilerSelfDict = parseProfilerOutput(fileName, self.profilerSelfDict)
+            baseUsec   = self.profilerSelfDict['ts_query_profiler_baseline:confirm']['usec']
+            baseCounts = self.profilerSelfDict['ts_query_profiler_baseline:confirm']['count']
+            self.usecPerCount = float(baseUsec) / float(baseCounts)
+        else:
+            self.usecPerCount = 0
 
+    #------------------------------------------------------------
+    # If non-null arguments were passed, store the output of these
+    # files as baselines.  These will be subtracted off the main
+    # profiler times to calculate the relevant times spent profiling
+    # the paths of interest
+    #------------------------------------------------------------
+    
     def calculateBaselines(self, clientFileName, serverFileName):
-        self.profilerBaselineDict = parseProfilerOutput(clientFileName, self.profilerBaselineDict)
-        self.profilerBaselineDict = parseProfilerOutput(serverFileName, self.profilerBaselineDict)
+        if clientFileName != None:
+            self.profilerBaselineDict = parseProfilerOutput(clientFileName, self.profilerBaselineDict)
+        if serverFileName != None:
+            self.profilerBaselineDict = parseProfilerOutput(serverFileName, self.profilerBaselineDict)
 
-    def calculateTimes(self, clientFileName, serverFileName):
+    #------------------------------------------------------------
+    # Parse client and server profiler files to get the total profiler count,
+    # total profiler time, and entries for all encountered labels
+    #------------------------------------------------------------
+
+    def calculateTimes(self, clientFileName, serverFileName, totalLabel):
 
         # Read the client file first.  The total time is the first
         # usec count encountered in the client file
 
         self.profilerActualDict = parseProfilerOutput(clientFileName, self.profilerActualDict)
+
         self.totalCount = self.profilerActualDict['totalcount']
-        self.totalUsec = self.profilerActualDict['firstusec']
+
+        if totalLabel == None:
+            self.totalUsec = self.profilerActualDict['firstusec']
 
         # Read the server file last.  The total count is the sum of the client and server counts
         
         self.profilerActualDict = parseProfilerOutput(serverFileName, self.profilerActualDict)
         self.totalCount += self.profilerActualDict['totalcount']
+
+        if totalLabel != None:
+            self.totalUsec = self.profilerActualDict[totalLabel]['usec']
+
+        print 'Actual dict = ' + str(self.profilerActualDict)
 
     def setAttr(self, nodeName, attr, val):
         for node in self.nodes:
@@ -541,7 +600,7 @@ class DiGraph(Node):
 #        self.setDepth()
         self.setShape()
         self.setArrowhead()
-        self.setLabels(self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold))
+        self.setLabels(self.profilerActualDict, self.nOp, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold))
         self.constructSubgraphs()
         self.connectNodes(self.isDelta)
         self.renderEdgeLabels()
@@ -608,7 +667,7 @@ class DiGraph(Node):
             else:
                 color = None
 
-            attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nQuery, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold), color)
+            attr['label'] = self.constructLabel(tag, label, self.profilerActualDict, self.nOp, (self.isDelta, self.deltaFrac, self.refUsec, self.threshold), color)
 
     def connectEdges(self):
         for edge in self.edges:
@@ -679,19 +738,24 @@ def parseProfilerOutput(fileName, labelDict):
     nline = len(content)
 
     totalcount = getLine('totalcount', content)
-    labels = getLine('label', content)
-    counts = getLine('count', content)
-    usec   = getLine('usec',  content)
+    labels     = getLine('label',      content)
+    counts     = getLine('count',      content)
+    usec       = getLine('usec',       content)
+
+    print 'len = ' + str(len(labels))
     
     if len(labels) != 0:
-        for i in range(2, len(labels)):
+        for i in range(1, len(labels)):
             label = labels[i].replace("'", "")
             label = label.replace("\n", "")
 
-            labelDict[label] = {}
-            labelDict[label]['usec']  = float(usec[i])
-            labelDict[label]['count'] = int(counts[i])
-            print 'READ LABEL ' + label + ' usec = ' + str(usec[i])
+            print 'label = ' + label + ' size = ' + str(len(label))
+            print 'i = ' + str(i) + ' usec = ' + str(usec[i+1])
+            if len(label) > 0:
+                labelDict[label] = {}
+                labelDict[label]['usec']  = float(usec[i+1])
+                labelDict[label]['count'] = int(counts[i+1])
+                print 'READ LABEL ' + label + ' usec = ' + str(usec[i+1])
     else:
         for i in range(2, len(usec)):
             label = str(i)
@@ -705,7 +769,7 @@ def parseProfilerOutput(fileName, labelDict):
     
     labelDict['totalcount'] = int(total)
     labelDict['firstusec']  = float(usec[2])
-
+    print 'HERE'
     return labelDict
 
 #-----------------------------------------------------------------------
