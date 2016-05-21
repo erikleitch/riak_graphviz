@@ -503,8 +503,8 @@ class DiGraph(Node):
     def calculateUsecPerCount(self, fileName):
         if fileName != None:
             self.profilerSelfDict = parseProfilerOutput(fileName, self.profilerSelfDict)
-            baseUsec   = self.profilerSelfDict['ts_query_profiler_baseline:confirm']['usec']
-            baseCounts = self.profilerSelfDict['ts_query_profiler_baseline:confirm']['count']
+            baseUsec   = self.profilerSelfDict['total']['usec']
+            baseCounts = self.profilerSelfDict['total']['count']
             self.usecPerCount = float(baseUsec) / float(baseCounts)
         else:
             self.usecPerCount = 0
