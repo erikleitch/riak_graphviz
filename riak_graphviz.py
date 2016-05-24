@@ -279,7 +279,7 @@ class Node:
                 val = frac
             else:
                 val = profilerActualDict[tag]['corrusec']
-                print 'REFUSEC = ' + str(refUsec)
+                #print 'REFUSEC = ' + str(refUsec)
         else:
             frac = -1
             val = 0.0
@@ -490,7 +490,7 @@ class DiGraph(Node):
                 count = self.profilerActualDict[key]['count']
 
                 self.profilerActualDict[key]['corrusec'] = (usec - base) - (self.usecPerCount * count)
-                print 'UNCORR key = ' + key + ' val = ' + str(usec) + ' base = ' + str(base) + ' usecpercount = ' + str(self.usecPerCount) + ' count = ' + str(count) + ' CORR = ' + str(self.profilerActualDict[key]['corrusec'])
+#                print 'UNCORR key = ' + key + ' val = ' + str(usec) + ' base = ' + str(base) + ' usecpercount = ' + str(self.usecPerCount) + ' count = ' + str(count) + ' CORR = ' + str(self.profilerActualDict[key]['corrusec'])
                 self.profilerActualDict[key]['frac'] = 100 * self.profilerActualDict[key]['corrusec']/self.totalUsec
 
     #------------------------------------------------------------
